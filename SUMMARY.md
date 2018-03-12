@@ -13,5 +13,4 @@
   * [课前准备](ke-qian-zhun-bei.md)
   * [第一课](di-yi-ke.md)
   * [课后作业\_Lab1](ke-hou-zuo-ye.md)
-  * [test](test.md)
 
