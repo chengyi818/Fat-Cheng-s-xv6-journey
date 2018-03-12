@@ -11,4 +11,5 @@
   * [代码下载与调试](zhun-bei-gong-zuo/dai-ma-xia-zai-yu-diao-shi.md)
 * 第一天
   * [课前准备](ke-qian-zhun-bei.md)
+  * 第一课
 
