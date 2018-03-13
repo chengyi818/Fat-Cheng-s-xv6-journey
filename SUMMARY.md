@@ -13,4 +13,5 @@
   * [课前准备](di-yi-tian/ke-qian-zhun-bei.md)
   * [第一课](di-yi-tian/di-yi-ke.md)
   * [课后作业\_Lab1](di-yi-tian/ke-hou-zuo-ye.md)
+    * [Part1\_Pc启动](di-yi-tian/ke-hou-zuo-ye/part1pc-qi-dong.md)
 
