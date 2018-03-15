@@ -15,4 +15,5 @@
   * [课后作业\_Lab1](di-yi-tian/ke-hou-zuo-ye.md)
   * [Part1\_Pc启动](di-yi-tian/part1pc-qi-dong.md)
     * [熟悉x86汇编](di-yi-tian/part1pc-qi-dong/shu-xi-x86-hui-bian.md)
+    * [x86模拟器](di-yi-tian/part1pc-qi-dong/x86mo-ni-qi.md)
 
