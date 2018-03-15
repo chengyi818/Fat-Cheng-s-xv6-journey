@@ -10,3 +10,5 @@
 需要我们熟悉x86汇编语言,可以参考[the 6.828 reference page](https://pdos.csail.mit.edu/6.828/2017/reference.html).
 
 [Brennan's Guide to Inline Assembly](http://www.delorie.com/djgpp/doc/brennan/brennan_att_inline_djgpp.html)给出了Intel和AT&T的语法区别对比.
+
+[汇编语言 王爽著](https://book.douban.com/subject/1215178/)也值得一看.
