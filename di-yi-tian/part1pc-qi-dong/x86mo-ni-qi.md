@@ -4,6 +4,8 @@
 ## 编译jos
 在jos源码目录输入`make`,将会编译jos代码.
 
+编译完成后,bootloader生成位置`obj/boot/boot`,Kernel生成位置`obj/kern/kernel.img`
+
 ## 启动qemu
 在jos源码目录输入`make qemu`,将会直接启动QEMU来运行我们的jos系统.
 
@@ -28,3 +30,8 @@ Welcome to the JOS kernel monitor!
 Type 'help' for a list of commands.
 K> 
 ```
+
+Booting from Hard Disk...之后的输出,都是我们的jos内核打印的.
+
+## 运行jos
+目前我们的jos仅仅支持两条命令`help`和`kerninfo`,看看会输出什么.
