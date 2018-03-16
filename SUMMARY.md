@@ -17,4 +17,5 @@
     * [熟悉x86汇编](di-yi-tian/part1pc-qi-dong/shu-xi-x86-hui-bian.md)
     * [x86模拟器](di-yi-tian/part1pc-qi-dong/x86mo-ni-qi.md)
     * [物理内存布局](di-yi-tian/part1pc-qi-dong/wu-li-nei-cun-bu-ju.md)
+    * [BIOS](di-yi-tian/part1pc-qi-dong/bios.md)
 
