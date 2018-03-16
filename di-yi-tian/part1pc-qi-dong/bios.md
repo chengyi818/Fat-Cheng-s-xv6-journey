@@ -25,5 +25,10 @@ The target architecture is assumed to be i8086
 ```
 [f000:fff0] 0xffff0:	ljmp   $0xf000,$0xe05b
 ```
-我们可以得出几条结论:
-1. 
+
+我们可以分析第一条语句,得出几条结论:
+1. 初始指令的位置位于0x000ffff0,位于BIOS所在64KB的最顶部了.后面仅剩16个字节.
+2. PC起始时,CS=0xf000,IP=0xfff0.CS和IP寄存器是x86最重要的两个寄存器了,它们标识了CPU当前要执行的指令地址.CS为代码段寄存器,IP为指令指针寄存器.
+3. 第一条指令是jmp指令,而且目标地址是CS=0xf000,IP=0xe05b.
+
+## 为什么
