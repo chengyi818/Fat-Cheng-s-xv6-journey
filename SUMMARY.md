@@ -18,4 +18,5 @@
     * [x86模拟器](di-yi-tian/part1pc-qi-dong/x86mo-ni-qi.md)
     * [物理内存布局](di-yi-tian/part1pc-qi-dong/wu-li-nei-cun-bu-ju.md)
     * [BIOS](di-yi-tian/part1pc-qi-dong/bios.md)
+  * [Part2\_BootLoader](di-yi-tian/part2bootloader.md)
 
