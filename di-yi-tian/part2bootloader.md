@@ -25,4 +25,7 @@ JOS还是使用了传统的从硬盘启动的机制,也就是说我们的Bootloa
 
 如果对这些IO指令感兴趣,可以参考[the 6.828 reference page](https://pdos.csail.mit.edu/6.828/2017/reference.html)中的*IDE hard drive controller*部分.我们并不需要太过深入这个部分,虽然设备驱动是操作系统开发中,非常重要的部分.但是从整个操作系统的结构来看,它也是最无趣的部分了.
 
+### 疑问
+看起来boot.S中已经将CPU模式从实模式切换为32位保护模式,为何bootmain中还能够直接操作物理地址?看注释是说在readseg时,还没激活分页功能?
+
 ## 对照反汇编代码调试
