@@ -69,11 +69,11 @@ GDB一次执行N条指令
 将CR0寄存器中的CR0_PE_ON标志位置位,意味着真正切换到了32位模式.
 2. BootLoader执行的最后一条指令是什么,Kernel执行的第一条指令是什么?
 BootLoader执行的最后一条指令是:
-`7d6b: call *0x10018`
+`0x7d6b:      call   *0x10018`
 Kernel执行的第一条指令是:
-`10018: `
+`0x10000c:    movw   $0x1234,0x472`
 3. Kernel第一条指令的地址?
-`0x10018`
+`0x10000c:    movw   $0x1234,0x472`
 4. BootLoader是怎么知道kernel的大小,什么地方有这样的信息
 Kernel是一个ELF文件,那么在ELF头部信息中,尤其是programHead中就带有了ELF文件大小的信息.
 
