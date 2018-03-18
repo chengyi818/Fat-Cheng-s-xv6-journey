@@ -19,4 +19,5 @@
     * [物理内存布局](di-yi-tian/part1pc-qi-dong/wu-li-nei-cun-bu-ju.md)
     * [BIOS](di-yi-tian/part1pc-qi-dong/bios.md)
   * [Part2\_BootLoader](di-yi-tian/part2bootloader.md)
+    * [载入内核](di-yi-tian/part2bootloader/zai-ru-nei-he.md)
 
