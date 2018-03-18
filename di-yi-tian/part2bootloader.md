@@ -66,9 +66,13 @@ GDB一次执行N条指令
 
 试着回答几个问题:
 1. CPU什么时候切换到32位模式的,是什么造成了这样的切换
+将CR0寄存器中的CR0_PE_ON标志位置位,意味着真正切换到了32位模式.
 2. BootLoader执行的最后一条指令是什么,Kernel执行的第一条指令是什么?
+BootLoader执行的最后一条指令是:
+Kernel执行的第一条指令是:
 3. Kernel第一条指令的地址?
-4. BootLoader是怎么知道kernel的大小,什么地方有这样的信息?
+4. BootLoader是怎么知道kernel的大小,什么地方有这样的信息
+Kernel是一个ELF文件,那么在ELF头部信息中,尤其是programHead中就带有了ELF文件大小的信息.
 
 
 
