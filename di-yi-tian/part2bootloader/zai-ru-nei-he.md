@@ -34,7 +34,12 @@
 
 ### objdump查看ELF格式
 
+* objdump -h obj/kern/kernel
+该命令可以查看我们kernel ELF中所有段的信息.
 
+信息包含了段的名字,大小,载入地址,执行地址等等.其中VMA(link address)表示该段执行的内存地址,LMA(load address)表示该段载入的内存地址.
+
+当然现在还有一种称为position-independent的ELF,该文件并没有包含绝对的位置信息.它主要是为了现代的共享库设计的,不可避免地也会带来性能和复杂上的代价.在6.828中,我们并没有使用这样的特性.
 
 
 
