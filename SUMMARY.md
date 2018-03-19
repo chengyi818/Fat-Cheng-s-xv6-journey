@@ -20,4 +20,5 @@
     * [BIOS](di-yi-tian/part1pc-qi-dong/bios.md)
   * [Part2\_BootLoader](di-yi-tian/part2bootloader.md)
     * [载入内核](di-yi-tian/part2bootloader/zai-ru-nei-he.md)
+  * [Part3\_内核](di-yi-tian/part3nei-he.md)
 
