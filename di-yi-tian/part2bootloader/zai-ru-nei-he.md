@@ -70,11 +70,20 @@ Program Header:
 下面是一个练习,我们再次使用GDB调试BootLoader,看看哪些指令必须要求Bootloader载入在正确的位置.尝试修改Bootloader的载入位置,看看会发生什么?
 
 
+### 个人答案
+我将0x7c00修改位0x6c00,发现无法运行
 
+## Kernel载入地址和执行地址
+在*Exercise 3*中,我们发现内核执行的第一条指令的地址是`0x10000c`,而内核的载入地址和执行地址均为`0x100000`.前面我们不是提到link address就是ELF的执行地址么?
 
+这里还有加入一个新的字段,在ELF文件的头部信息中还有一个字段,称为`e_entry`.它表示该ELF的执行入口.
 
+我们可以通过命令`objdump -f obj/kern/kernel`来查看该字段.对比Bootloader的执行入口,我们发现果然如此.
 
+## Exercise 6
+我们可以通过GDB的`x/Nx ADDR`命令,来查看内存中的内容.
 
+我们可以查看BIOS准备跳转到Bootloader的节点,0x00100000后16个字节的内容.再对比Bootloader准备跳转到Kernel的节点,0x7d6b后16个字节的内容.看看有什么区别?
 
 
 
