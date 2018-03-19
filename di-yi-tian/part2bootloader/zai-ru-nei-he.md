@@ -35,13 +35,30 @@
 ### objdump查看ELF格式
 
 * objdump -h obj/kern/kernel
+
 该命令可以查看我们kernel ELF中所有段的信息.
 
 信息包含了段的名字,大小,载入地址,执行地址等等.其中VMA(link address)表示该段执行的内存地址,LMA(load address)表示该段载入的内存地址.
 
 当然现在还有一种称为position-independent的ELF,该文件并没有包含绝对的位置信息.它主要是为了现代的共享库设计的,不可避免地也会带来性能和复杂上的代价.在6.828中,我们并没有使用这样的特性.
 
+* objdump -h obj/boot/boot.out
 
+通常而言,链接地址和载入地址是一致的.我们看到Bootloader中的.text就是这样的,载入地址和链接地址均为0x7c00.
+
+* objdump -x obj/kern/kernel
+
+Bootloader使用ELF的头部信息来决定载入哪些program段,载入到哪里.
+
+```
+Program Header:
+    LOAD off    0x00001000 vaddr 0xf0100000 paddr 0x00100000 align 2**12
+         filesz 0x00007120 memsz 0x00007120 flags r-x
+    LOAD off    0x00009000 vaddr 0xf0108000 paddr 0x00108000 align 2**12
+         filesz 0x0000a300 memsz 0x0000a944 flags rw-
+   STACK off    0x00000000 vaddr 0x00000000 paddr 0x00000000 align 2**4
+         filesz 0x00000000 memsz 0x00000000 flags rwx
+```
 
 
 
