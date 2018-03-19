@@ -60,6 +60,16 @@ Program Header:
          filesz 0x00000000 memsz 0x00000000 flags rwx
 ```
 
+通过查看Program Header,我们能够知道该文件的哪些部分将被载入内存.标有*LOAD*的部分将被载入内存,还有其他一些信息包括vaddr(虚拟内存地址),paddr(物理内存地址),filesz(文件大小),memsz(占用内存大小).
+
+回到`boot/main.c`中,`ph->p_pa`表示了每个程序段的目标物理地址.
+
+## Exercise 5
+还记得BootLoader的VMA和LMA么?它们都是`0x7c00`.BIOS正是通过这个信息,才将它们载入到正确的位置并且从正确的位置执行.Bootloader的位置信息,我们是通过`boot/Makefrag`中的`-Ttext 0x7c00`设置的.
+
+下面是一个练习,我们再次使用GDB调试BootLoader,看看哪些指令必须要求Bootloader载入在正确的位置.尝试修改Bootloader的载入位置,看看会发生什么?
+
+
 
 
 
