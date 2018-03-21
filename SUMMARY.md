@@ -23,4 +23,5 @@
   * [Part3\_内核](di-yi-tian/part3nei-he.md)
     * [虚拟内存](di-yi-tian/part3nei-he/xu-ni-nei-cun.md)
     * [格式化输出](di-yi-tian/part3nei-he/ge-shi-hua-shu-chu.md)
+    * [栈](di-yi-tian/part3nei-he/zhan.md)
 
