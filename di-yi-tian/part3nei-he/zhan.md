@@ -47,8 +47,30 @@ C程序一般不需要在整型和指针类型间转换,但是在操作系统中
 ## Exercise 12
 修改`backtrace`函数的实现,以便打印出函数名,文件名,行号等更多的信息.
 
-在`debuginfo_eip`中,`__STAB*`从何而来?这个问题比较大,可以拆解为以下问题:
-1. 
+在`debuginfo_eip`中,`__STAB_*`从何而来?这个问题比较复杂,可以拆解为以下问题:
+1. 在`kern/kernel.ld`中查看`__STAB_*`
+2. 运行`objdump -h obj/kern/kernel`
+3. 运行`objdump -G obj/kern/kernel`
+4. 运行`gcc -pipe -nostdinc -O2 -fno-builtin -I. -MD -Wall -Wno-format -DJOS_KERNEL -gstabs -c -S kern/init.c`,然后查看`init.S`.
+5. 看看BootLoader是如何在载入内核时,载入符号表的.
+
+通过插入`stab_binsearch`函数的调用,补充完成函数`debuginfo_eip()`.通过调用`debuginfo_eip()`扩展`backtrace`函数的实现,实现如下打印:
+```
+K> backtrace
+Stack backtrace:
+  ebp f010ff78  eip f01008ae  args 00000001 f010ff8c 00000000 f0110580 00000000
+         kern/monitor.c:143: monitor+106
+  ebp f010ffd8  eip f0100193  args 00000000 00001aac 00000660 00000000 00000000
+         kern/init.c:49: i386_init+59
+  ebp f010fff8  eip f010003d  args 00000000 00000000 0000ffff 10cf9a00 0000ffff
+         kern/entry.S:70: <unknown>+0
+K> 
+```
+每行包含了文件名和`eip`指向的行号.紧接着是函数名和`eip`距函数入口的指令偏移,比如`monitor+106`表示返回地址`eip`距离函数入口`monitor`为106字节.
+
+### Tip
+
+
 
 
 
