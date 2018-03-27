@@ -27,6 +27,14 @@ x86的栈指针寄存器(esp)指向当前栈的最低地址,该地址以下的�
 ## Exercise 10
 为了加深我们对C语言函数调用规则的了解,在`obj/kern/kernel.asm`中找到函数`test_backtrace`并设下断点.看看它每次被调用时发生了什么?每次被调用时,入栈了哪些参数?
 
+### 成胖子个人解答
+这里我们主要需要学习x86的函数调用过程.网上有很多相关的博客.这里给出两个:
+1. 精简: [X86架构上函数调用过程的堆栈](https://blog.csdn.net/do2jiang/article/details/5404816)
+2. 详细: [函数调用过程探究](https://www.cnblogs.com/bangerlee/archive/2012/05/22/2508772.html)
+对于我们而言,主要需要学习的是ebp寄存器的妙用.
+
+---
+
 上面的练习应该让你对我们要实现的stack backtrace函数有了些感觉.在`kern/monitor.c`中,6.828已经准备好了函数原型`mon_backtrace()`.`inc/x86.h`中的函数`read_ebp()`会对我们实现`mon_backtrace()`有所帮助.当我们实现之后,应该将`mon_backtrace`加入`kern/monitor.c`中的commands中,以便从命令行调用.
 
 输出格式要求如下:
