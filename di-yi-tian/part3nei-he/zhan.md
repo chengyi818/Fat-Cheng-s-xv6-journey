@@ -100,6 +100,8 @@ printf("%.*s", length, string)
 
 有时候,我们会发现`backtrace`打印的内容要少很多,这是因为部分函数被编译优化内联了.如果在`GNUMakefile`86行的位置,调整`-O`选项的数值,可以调整编译器的优化程度.
 
+### FC解答
+这部分在考察ELF文件结构中STAB和STABSTR的作用和解析.
 
 
 
