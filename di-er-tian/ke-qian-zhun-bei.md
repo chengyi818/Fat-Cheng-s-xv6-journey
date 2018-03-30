@@ -25,3 +25,9 @@ x86的寄存器说明:
 ### I/O
 1. old: in/out指令
 2. new: 内存映射IO
+
+## 附录B
+### 引导加载器(boot loader)
+同Lab1
+
+## bootasm.S和bootmain.c
