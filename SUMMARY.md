@@ -24,8 +24,8 @@
     * [虚拟内存](di-yi-tian/part3nei-he/xu-ni-nei-cun.md)
     * [格式化输出](di-yi-tian/part3nei-he/ge-shi-hua-shu-chu.md)
     * [栈](di-yi-tian/part3nei-he/zhan.md)
-* 第二天
-  * [课前准备](ke-qian-zhun-bei.md)
-  * [第二课](di-er-ke.md)
-  * [课后作业](ke-hou-zuo-ye.md)
+* [第二天](di-er-tian.md)
+  * [课前准备](di-er-tian/ke-qian-zhun-bei.md)
+  * [第二课](di-er-tian/di-er-ke.md)
+  * [课后作业](di-er-tian/ke-hou-zuo-ye.md)
 
