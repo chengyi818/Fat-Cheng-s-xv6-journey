@@ -31,3 +31,7 @@ x86的寄存器说明:
 同Lab1
 
 ### bootasm.S
+代码导读
+
+### bootmain.c
+代码导读
