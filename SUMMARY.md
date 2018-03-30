@@ -27,5 +27,5 @@
 * 第二天
   * [课前准备](ke-qian-zhun-bei.md)
   * [第二课](di-er-ke.md)
-  * 课后作业
+  * [课后作业](ke-hou-zuo-ye.md)
 
