@@ -30,4 +30,4 @@ x86的寄存器说明:
 ### 引导加载器(boot loader)
 同Lab1
 
-## bootasm.S和bootmain.c
+### bootasm.S
