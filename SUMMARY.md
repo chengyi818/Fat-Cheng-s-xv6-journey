@@ -27,5 +27,6 @@
 * [第二天](di-er-tian.md)
   * [课前准备](di-er-tian/ke-qian-zhun-bei.md)
   * [第二课](di-er-tian/di-er-ke.md)
+    * [PC硬件和x86](di-er-tian/di-er-ke/pcying-jian-he-x86.md)
   * [课后作业](di-er-tian/ke-hou-zuo-ye.md)
 
