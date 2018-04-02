@@ -29,6 +29,14 @@ q   四字(64位),对应于Intel的qword ptr
 | movl (%ebx), %edx | edx = \*(int32_t*)ebx; | indirect |
 | movl 4(%ebx), %edx | edx = \*(int32_t*)(ebx+4); | displaced(偏移) |
 
+## 指令分类
+1. 数据移动: MOV, PUSH, POP
+2. 算术运算: TEST, SHL, ADD, AND
+3. IO操作: IN, OUT
+4. 控制指令: JMP, JZ, JNZ, CALL, RET
+5. 字符串操作: REP, MOVSB
+6. 系统控制: IRET, INT
+
 
 
 
