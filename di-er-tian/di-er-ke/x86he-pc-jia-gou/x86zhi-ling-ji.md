@@ -20,15 +20,16 @@ q   四字(64位),对应于Intel的qword ptr
 4. 常量指向的内存
 
 ## 示例
-```
-AT&T syntax	"C"-ish equivalent
-movl %eax, %edx	edx = eax;	register mode
-movl $0x123, %edx	edx = 0x123;	immediate
-movl 0x123, %edx	edx = *(int32_t*)0x123;	direct
-movl (%ebx), %edx	edx = *(int32_t*)ebx;	indirect
-movl 4(%ebx), %edx	edx = *(int32_t*)(ebx+4);	displaced
 
-```
+|AT&T syntax | "C"-ish equivalent | |
+| --- | --- | --- |
+| movl %eax, %edx | edx = eax; | register mode |
+| movl $0x123, %edx | edx = 0x123; | immediate |
+| movl 0x123, %edx | edx = *(int32_t*)0x123; | direct |
+| movl (%ebx), %edx | edx = *(int32_t*)ebx; | indirect |
+| movl 4(%ebx), %edx | edx = *(int32_t*)(ebx+4); | displaced |
+
+
 
 
 
