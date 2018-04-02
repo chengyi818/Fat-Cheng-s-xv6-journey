@@ -33,5 +33,6 @@
       * [x86物理内存布局](di-er-tian/di-er-ke/x86he-pc-jia-gou/x86wu-li-nei-cun-bu-ju.md)
       * [x86指令集](di-er-tian/di-er-ke/x86he-pc-jia-gou/x86zhi-ling-ji.md)
       * [gcc x86调用约定](di-er-tian/di-er-ke/x86he-pc-jia-gou/gcc-x86diao-yong-yue-ding.md)
+      * [PC虚拟机](di-er-tian/di-er-ke/x86he-pc-jia-gou/pcxu-ni-ji.md)
   * [课后作业](di-er-tian/ke-hou-zuo-ye.md)
 
