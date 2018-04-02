@@ -29,5 +29,6 @@
   * [第二课](di-er-tian/di-er-ke.md)
     * [PC硬件和x86](di-er-tian/di-er-ke/pcying-jian-he-x86.md)
     * [x86和PC架构](di-er-tian/di-er-ke/x86he-pc-jia-gou.md)
+      * [PC架构](di-er-tian/di-er-ke/x86he-pc-jia-gou/pcjia-gou.md)
   * [课后作业](di-er-tian/ke-hou-zuo-ye.md)
 
