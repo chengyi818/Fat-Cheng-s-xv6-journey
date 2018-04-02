@@ -30,5 +30,6 @@
     * [PC硬件和x86](di-er-tian/di-er-ke/pcying-jian-he-x86.md)
     * [x86和PC架构](di-er-tian/di-er-ke/x86he-pc-jia-gou.md)
       * [PC架构](di-er-tian/di-er-ke/x86he-pc-jia-gou/pcjia-gou.md)
+      * [x86物理内存布局](di-er-tian/di-er-ke/x86he-pc-jia-gou/x86wu-li-nei-cun-bu-ju.md)
   * [课后作业](di-er-tian/ke-hou-zuo-ye.md)
 
