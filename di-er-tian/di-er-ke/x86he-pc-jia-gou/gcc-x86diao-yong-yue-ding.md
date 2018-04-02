@@ -35,10 +35,10 @@ GCC编译器规定了栈的使用方式,在x86上调用者和被调用者如何�
 2. %ebp, %ebx, %esi, %edi 是被调动者保存寄存器
 FC批注: 这个术语不是很理解.
 
-## 具体使用
+
+## 函数栈结构
 只要不破坏Gcc的约定,函数可以做任何事情.
 
-### 函数栈结构
 ```
 		       +------------+   |
 		       | arg 2      |   \
@@ -58,9 +58,82 @@ FC批注: 这个术语不是很理解.
 		%esp-> +------------+   /
 		
 ```
+1. %esp可以向下增长,使得当前函数的可用栈变大.
+2. %ebp指向保存上一个函数%ebp的内存地址.通过%ebp,我们可以遍历整个函数调用栈.
+3. 函数入口通常指令为:
+```
+			pushl %ebp
+			movl %esp, %ebp
+```
+或者`enter $0, $0`.后面一种形式很少使用.
+4. 函数出口指令通常为:
+```
+			movl %ebp, %esp
+			popl %ebp
+``` 
+或者`leave`.后面一种指令更经常被使用.
 
+## 示例
+### C代码如下:
+```
+		int main(void) { return f(8)+1; }
+		int f(int x) { return g(x); }
+		int g(int x) { return x+3; }
+```
+### 汇编指令如下:
+```
+		_main:
+					prologue
+			pushl %ebp
+			movl %esp, %ebp
+					body
+			pushl $8
+			call _f
+			addl $1, %eax
+					epilogue
+			movl %ebp, %esp
+			popl %ebp
+			ret
+		_f:
+					prologue
+			pushl %ebp
+			movl %esp, %ebp
+					body
+			pushl 8(%esp)
+			call _g
+					epilogue
+			movl %ebp, %esp
+			popl %ebp
+			ret
 
+		_g:
+					prologue
+			pushl %ebp
+			movl %esp, %ebp
+					save %ebx
+			pushl %ebx
+					body
+			movl 8(%ebp), %ebx
+			addl $3, %ebx
+			movl %ebx, %eax
+					restore %ebx
+			popl %ebx
+					epilogue
+			movl %ebp, %esp
+			popl %ebp
+			ret
+```
 
+### 精简_g指令:
+```
+		_g:
+			movl 4(%esp), %eax
+			addl $3, %eax
+			ret
+```
+
+### 精简_f指令:
+因为\_f没有任何实际意义,所以可以直接跳转到\_g即可.
 
 
 
