@@ -31,5 +31,28 @@ nm kernel | grep _start
 3. `bootmain`的第一条汇编指令是如何调整栈的?通过bootblock.asm/bootmain可以查看到这些信息.
 4. 继续使用gdb调试,找到何处%eip寄存器被设置位`0x10000c`,此时栈有什么变化?
 
+### FC备注
+1. 在bootasm.S中,跳转到bootmain之前,通过指令`movl $start, %esp`设置了%esp寄存器的值.此时$start为bootloader的载入地址,即`0x7c00`.从这里开始,栈将向下生长.
+
+2. 我们已经知道进入bootmain之前,$esp被设置为`0x7c00`.之后是`call bootmain`.call指令会将返回地址压栈.因此在刚进入bootmain时,栈顶为`0x7bfc`,栈中只有一个返回地址`0x00007c4d`.
+
+3. 进入函数第一件事,就是将上一个函数的$ebp寄存器压栈,继而将%esp寄存器的值赋给%ebp,再调整新的%esp的值.
+
+4. 
+
 ### 提交
-输出`x/24x $esp`到文件中,并添加注释.文件保存为`hw1.txt`.
+输出`x/24x $esp`到文件中,并添加注释.我个人将文件保存在github`resources/HW_Boot_xv6.md`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
