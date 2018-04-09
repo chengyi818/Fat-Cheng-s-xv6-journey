@@ -35,4 +35,5 @@
       * [gcc x86调用约定](di-er-tian/di-er-ke/x86he-pc-jia-gou/gcc-x86diao-yong-yue-ding.md)
       * [PC虚拟机](di-er-tian/di-er-ke/x86he-pc-jia-gou/pcxu-ni-ji.md)
   * [课后作业](di-er-tian/ke-hou-zuo-ye.md)
+* [第三天](di-san-tian.md)
 
