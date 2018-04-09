@@ -43,6 +43,11 @@
     打印当前函数栈
 19. list *location*
     显示执行位置的源码
+20. backtrace
+    回溯函数栈
+21. set *variable*
+    执行期间改变变量的值
+22. 
     
     
     
