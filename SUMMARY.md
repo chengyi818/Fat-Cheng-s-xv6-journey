@@ -38,4 +38,5 @@
 * [第三天](di-san-tian.md)
   * [课前准备](di-san-tian/ke-qian-zhun-bei.md)
   * [第三课](di-san-tian/di-san-ke.md)
+    * [C语言](di-san-tian/di-san-ke/cyu-yan.md)
 
