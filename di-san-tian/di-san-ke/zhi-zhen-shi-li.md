@@ -1,4 +1,6 @@
 # 指针示例代码
+
+代码位置`resources/pointers.c`
 ```
 #include <stdio.h>
 #include <stdlib.h>
