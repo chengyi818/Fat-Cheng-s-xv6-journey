@@ -44,10 +44,11 @@
 19. list *location*
     显示执行位置的源码
 20. backtrace
-    回溯函数栈
+    回溯函数栈,在完成lab 1时,这个命令很有帮助.
 21. set *variable*
     执行期间改变变量的值
-22. 
+22. symbol-file obj/usr/*name* 或者 symbol-file obj/kern/kernel
+    运行时更换符号文件
     
     
     
