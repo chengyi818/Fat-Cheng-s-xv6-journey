@@ -36,4 +36,5 @@
       * [PC虚拟机](di-er-tian/di-er-ke/x86he-pc-jia-gou/pcxu-ni-ji.md)
   * [课后作业](di-er-tian/ke-hou-zuo-ye.md)
 * [第三天](di-san-tian.md)
+  * [课前准备](di-san-tian/ke-qian-zhun-bei.md)
 
