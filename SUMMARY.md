@@ -41,4 +41,5 @@
     * [C语言](di-san-tian/di-san-ke/cyu-yan.md)
     * [gdb](di-san-tian/di-san-ke/gdb.md)
     * [指针示例](di-san-tian/di-san-ke/zhi-zhen-shi-li.md)
+  * [课后作业\_shell](di-san-tian/ke-hou-zuo-ye-shell.md)
 
