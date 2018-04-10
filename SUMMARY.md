@@ -44,4 +44,6 @@
   * [课后作业\_shell](di-san-tian/ke-hou-zuo-ye-shell.md)
   * [课后作业\_Lab2](di-san-tian/ke-hou-zuo-ye-lab2.md)
 * [第四天](di-si-tian.md)
+  * [课前准备](di-si-tian/ke-qian-zhun-bei.md)
+  * 第四课
 
