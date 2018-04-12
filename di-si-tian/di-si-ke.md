@@ -50,7 +50,7 @@
 ` ls > tempfile ; wc -l < tempfile`
 管道自管理自回收.
 
-### 
+### 系统调用设计
 
 
 
