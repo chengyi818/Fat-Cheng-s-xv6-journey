@@ -48,4 +48,5 @@
   * [第四课](di-si-tian/di-si-ke.md)
 * [第五天](di-wu-tian.md)
   * [课前准备](di-wu-tian/ke-qian-zhun-bei.md)
+  * [第五课](di-wu-tian/di-wu-ke.md)
 
