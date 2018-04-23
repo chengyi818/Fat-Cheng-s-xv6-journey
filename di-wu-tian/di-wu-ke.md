@@ -147,8 +147,36 @@ info reg
 
 2. INT指令做了哪些事情?
 * 切换到当前进程的内核栈
-* 
+* 在内核栈中保存必要的用户寄存器
+* 将CPL设置为0
+* 从内核提供的中断向量入口点开始执行代码
 
+3. 内核%esp从何而来?
+内核栈在进程创建的时候被分配.通过%esp寄存器,内核告知硬件当前进程的内核栈顶位置.
+
+## 用户空间信息的保存
+通过INT指令,保存了一部分用户空间信息.
+
+通过`trapasm.S`中的`alltraps`,将会保存用户空间剩下的寄存器.通过`pushal`将会一次性将8个寄存器入栈:`eax~edi`.
+
+```
+x/19x $esp
+  19 words at top of kernel stack:
+    ss
+    esp
+    eflags
+    cs
+    eip
+    err    -- INT saved from here up
+    trapno
+    ds
+    es
+    fs
+    gs
+    eax..edi
+```
+
+阅读`x86.h`中的`trapframe`结构体,有助于这部分的了解.本质上就是在系统调用后,整个用户空间的信息都将保存在`trapframe`中.当从系统调用返回后,将通过`trapframe`恢复用户空间状态.有时在内核执行过程中,将会读写`trapframe`的内容.
 
 
 
