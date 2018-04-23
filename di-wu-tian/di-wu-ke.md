@@ -110,7 +110,7 @@ xv6 进程/栈 图解
 内核通过配置MMU,用户代码仅允许访问内存地址空间的下半部分,即用户空间部分.
 而每个进程映射的内核空间部分都是一样的,即将相同的物理内存地址,映射到相同的虚拟空间地址.
 
-## 系统调用入口点
+## 用户空间: 系统调用入口点
 准备进入系统调用之前,以`write()`系统调用为例:
 ```
   break *0xb90
@@ -128,7 +128,24 @@ xv6 进程/栈 图解
   x/c 0x3f7a
 ```
 
+## INT指令: 内核入口
+```
+stepi
+info reg
+    cs=0x8 -- CPL=0 => kernel mode
+    note INT changed eip and esp to high kernel addresses
+  where is eip?
+    at a kernel-supplied vector -- only place user can go
+    so user program can't jump to random places in kernel with CPL=0
+  x/6wx $esp
+    INT saved a few user registers
+    err, eip, cs, eflags, esp, ss
+```
 
+1. 为什么INT指令保存了上面的哪些寄存器?
+因为在中断处理的过程中,内核可能覆盖这些寄存器.
+
+2. 
 
 
 
