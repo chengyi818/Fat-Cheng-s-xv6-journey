@@ -107,6 +107,27 @@ xv6 进程/栈 图解
             user data
   00000000: user instructions
 ```
+内核通过配置MMU,用户代码仅允许访问内存地址空间的下半部分,即用户空间部分.
+而每个进程映射的内核空间部分都是一样的,即将相同的物理内存地址,映射到相同的虚拟空间地址.
+
+## 系统调用入口点
+准备进入系统调用之前,以`write()`系统调用为例:
+```
+  break *0xb90
+  x/3i 0xb8b
+    0x10 in eax is the system call number for write
+  info reg
+    cs=0x1b, B=1011 -- CPL=3 => user mode
+    esp and eip are low addresses -- user virtual addresses
+  x/4x $esp
+    cc1 is return address -- in printf
+    2 is fd
+    0x3f7a is buffer on the stack
+    1 is count
+    i.e. write(2, 0x3f7a, 1)
+  x/c 0x3f7a
+```
+
 
 
 
