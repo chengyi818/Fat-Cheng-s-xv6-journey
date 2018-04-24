@@ -184,8 +184,21 @@ Q: 用户空间信息为何要保存在内核栈,而不是用户栈?
 
 
 ## 系统调用处理流程
+目前来看在INT指令之后,将会跳转到Vectors.S执行.在将trapno入栈后,将会跳转到`alltraps`.
+`alltraps`将用户空间剩余信息入栈后,将栈顶指针%esp的值入栈,此时%esp也是`trapframe`的地址,然后跳转到`trap`函数.
 
 ### 进入内核C代码
+1. 设备中断和系统异常也会进入`trap`函数.
+2. 系统调用的`trapno`为`T_SYSCALL`.
+3. `myproc()`将会返回当前核运行的进程结构体`proc`.
+4. `proc`定义在`proc.h struct proc`.
+5. 进入`trap`后,首先将`trapframe`保存到当前进程的`proc`结构体中.
+6. `syscall()`可以从先前保存的`trapframe %eax`中,获取系统调用号.
+7. 通过系统调用号,将在`syscalls`表中执行相应的函数,并将结果保存回`trapframe->eax`.
+8. 以系统调用`write()`为例,对应系统调用号为`0x10`,在`syscalls`表中对应函数为`sys_write`.
+9. 通过`arg*()`系列函数,从用户空间栈上,将参数读取到内核栈中.
+10. 最后调用底层函数,完成功能.
+
 
 ### 内核系统调用处理
 
