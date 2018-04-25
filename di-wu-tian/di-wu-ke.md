@@ -189,7 +189,7 @@ Q: 用户空间信息为何要保存在内核栈,而不是用户栈?
 目前来看在INT指令之后,将会跳转到Vectors.S执行.在将trapno入栈后,将会跳转到`alltraps`.
 `alltraps`将用户空间剩余信息入栈后,将栈顶指针%esp的值入栈,此时%esp也是`trapframe`的地址,然后跳转到`trap`函数.
 
-### 内核系统调用处理
+### 内核 系统调用处理
 1. 设备中断和系统异常也会进入`trap`函数.
 2. 系统调用的`trapno`为`T_SYSCALL`.
 3. `myproc()`将会返回当前核运行的进程结构体`proc`.
@@ -228,8 +228,31 @@ Q: 我们真的需要`iret`指令么?
 2. 执行新的进程.
 
 ## fork代码分析
+`fork()`的代码执行主要分为两个部分:
 
-
+1. 调用`allocproc()`
+  * 分配了一个新的`proc`结构体.
+  * 为`p->kstack`分配了内存
+  * 为`trapframe`预留了空间
+  * 设置子进程从内核返回用户空间的函数地址为`trapret`
+  * 设置子进程内核空间%eip为`forkret`
+  
+2. 再次返回`fork()`,此时主要目的就是填充新的`proc`结构体.
+  * 为子进程分配并映射内存页
+  * 将当前进程用户空间页表复制给子进程
+  * 将当前进程的trapframe复制给子进程
+  * 设置子进程的返回值,即`trapframe->eax`为0.
+  * 将当前进程的打开文件数组复制给子进程
+  ...
+  * 最终当前进程返回值为子进程的进程号
+  
+### 子进程的内核栈
+```
+  trapframe -- copy of parent, but eax=0
+  trapret's address
+  context
+    eip = forkret
+```
 
 
 
