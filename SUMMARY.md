@@ -52,4 +52,5 @@
   * [课后作业\_system\_calls](di-wu-tian/ke-hou-zuo-ye-system-calls.md)
 * [第六天](di-liu-tian.md)
   * [课前准备](di-liu-tian/ke-qian-zhun-bei.md)
+  * [第六课](di-liu-tian/di-liu-ke.md)
 
