@@ -128,32 +128,27 @@
 答: 不是必须的,否则在32bit时代一般电脑能支持的内存怎么会到4GB呢? 本质上,内核只需要知道新分配的内存页的物理地址即可.
 
 ## 深入x86 虚拟内存 相关代码
-```
-start where Robert left off: first process
+我们再次回到我们的第一个进程,来看看虚拟内存到底在代码层面是怎么应用的.我们的代码浏览从`main.c/main()`开始.
 
-setup: CPUS=1, turn-off interrupts in lapic.c
-b proc.c:297
+### 重点函数
+ 
+setupkvm()
+mappages()
+walkpgdir()
+switchkvm()
+inituvm()
+switchuvm()
 
-p *p
-Q: are these addresses virtual addresses
+4. mappages()
+### 函数`kinit1()`
+1. 初始化内核内存管理结构kmem
+2. 将内核结束处end到4MB部分的地址纳入kmem管理结构.
+3. end的地址是在kernel.ld文件中生成的.
 
-break into qemu: info pg (modified 6.828 qemu)
-
-step into switchuvm
-
-x/1024x p->pgdir
-what is 0x0dfbc007?  (pde; see handout)
-what is 0x0dfbc000?
-what is 0x0dfbc000 + 0x8000000
-what is there? (pte)
-what is at 0x8dfbd000?
-x x/i 0x8dfbd000 (first word of initcode.asm)
-
-step passed lcr3
-
-qemu: info pg
-```
-
+### 函数`kvmalloc()`
+1. 在进入`main()`时,我们使用的页表是在`entry.S`中设置的entrypgdir.这个映射只是为了临时使用.
+2. 调用`setupkvm`生成一个内核页表.
+3. 调用`switchkvm`切换到新的内核页表.
 
 
 
