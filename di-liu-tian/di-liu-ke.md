@@ -110,9 +110,50 @@
 1. 所有进程共享相同的内核页表映射.
 2. 内核切换进程时,同样会通过设置%cr3来切换进程页表.
 
-### 用户进程布局
+### 地址空间内存布局方式的优点
+1. 每个用户进程的虚拟地址都是从0开始,当然每个进程起始的虚拟地址对应着不同的物理页.
+2. 用户进程的堆空间占据大约2GB的连续虚拟地址空间,当然对应的物理地址不必是连续的,这样就解决了内存碎片的问题.
+3. 内核内存和用户内存都映射在同一份页表中.因此中断,系统调用时,切换用户/内核非常方便.
+4. 所有进程对内核空间的映射都是相同的,这样在内核中切换进程时非常方便.
+5. 同3,内核访问用户空间内存很方便,很容易读取系统调用所需要的参数.
+6. 便于内核从虚拟地址映射到物理地址,物理地址x映射到虚拟地址就是x+0x80000000.
 
+### 本方案下,进程可以操纵的最大内存是多少?
+答: 最大内存为2GB
 
+### 可以通过调整内存基址0x80000000来增大最大内存空间么?
+答: 不能,因为本方案下一页物理内存同时被映射到用户空间和内核空间.而虚拟地址的寻址总线为32bit,总寻址范围是4GB.二分后就是2GB.
+
+### 内核必须将所有物理内存映射到自己的虚拟地址空间么?
+答: 不是必须的,否则在32bit时代一般电脑能支持的内存怎么会到4GB呢? 本质上,内核只需要知道新分配的内存页的物理地址即可.
+
+## 深入x86 虚拟内存 相关代码
+```
+
+start where Robert left off: first process
+
+setup: CPUS=1, turn-off interrupts in lapic.c
+b proc.c:297
+
+p *p
+Q: are these addresses virtual addresses
+
+break into qemu: info pg (modified 6.828 qemu)
+
+step into switchuvm
+
+x/1024x p->pgdir
+what is 0x0dfbc007?  (pde; see handout)
+what is 0x0dfbc000?
+what is 0x0dfbc000 + 0x8000000
+what is there? (pte)
+what is at 0x8dfbd000?
+x x/i 0x8dfbd000 (first word of initcode.asm)
+
+step passed lcr3
+
+qemu: info pg
+```
 
 
 
