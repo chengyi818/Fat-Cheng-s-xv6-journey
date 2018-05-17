@@ -68,12 +68,23 @@
 # The UVPT
 或许缩写是: Userspace Virtual Page Table
 
-目前我们已经比较熟悉x86的二级页表结构了,
+目前我们已经比较熟悉x86的二级页表的映射方式了,即通过PDX和PTX来索引物理页.
 ![x86_pagetables](../../images/x86_pagetables.png)
+
+但硬件MMU是非常傻的,它做的计算如下:
+```
+pd = lcr3(); pt = *(pd+4*PDX); page = *(pt+4*PTX);
+```
+
+因此如果我们将page directory中的一项V的PPN设置为page directory,那么再通过PTX就可以索引到page tables.
 
 ![vpt](../../images/vpt.png)
 
-
+举例说明:
+1. 在JOS中,V被设置为`0x3BD`.也就是上图指回page directory头部的那项的index.
+2. 对应虚拟地址`(0x3BD<<22)|(0x3BD<<12)`的物理页就是page directory.
+3. 虚拟地址前10位为`(0x3BD<<22)`,其后10位不为`(0x3BD<<12)`的虚拟地址,对应的物理地址就是各个page table.
+4. 为了防止用户进程修改page table,因在PDE中设置用户只读.
 
 
 
