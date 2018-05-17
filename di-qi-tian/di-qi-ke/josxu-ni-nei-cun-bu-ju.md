@@ -71,6 +71,7 @@
 目前我们已经比较熟悉x86的二级页表结构了,
 ![x86_pagetables](../../images/x86_pagetables.png)
 
+![vpt](../../images/vpt.png)
 
 
 
