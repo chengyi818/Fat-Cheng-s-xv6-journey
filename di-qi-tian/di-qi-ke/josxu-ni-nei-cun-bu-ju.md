@@ -66,6 +66,11 @@
 8. 切换进程时,我们如何切换内存映射关系?
 
 # The UVPT
+或许缩写是: Userspace Virtual Page Table
+
+目前我们已经比较熟悉x86的二级页表结构了,
+![x86_pagetables](./images/x86_pagetables.png)
+
 
 
 
