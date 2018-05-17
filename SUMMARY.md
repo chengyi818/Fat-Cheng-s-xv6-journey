@@ -54,4 +54,5 @@
   * [课前准备](di-liu-tian/ke-qian-zhun-bei.md)
   * [第六课](di-liu-tian/di-liu-ke.md)
   * [课后作业\_lazy\_page\_alloc](di-liu-tian/ke-hou-zuo-ye-lazy-page-alloc.md)
+* [第七天](di-qi-tian.md)
 
