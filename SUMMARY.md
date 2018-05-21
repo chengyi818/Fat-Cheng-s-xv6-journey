@@ -57,4 +57,5 @@
 * [第七天](di-qi-tian.md)
   * [第七课](di-qi-tian/di-qi-ke.md)
     * [JOS虚拟内存布局](di-qi-tian/di-qi-ke/josxu-ni-nei-cun-bu-ju.md)
+    * [PPT](di-qi-tian/di-qi-ke/ppt.md)
 
