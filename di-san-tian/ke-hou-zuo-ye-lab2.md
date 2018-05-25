@@ -21,4 +21,7 @@ kern/kclock.c
 ```
 
 1. memlayout.h描述了jos的虚拟地址布局,我们需要通过修改pmap.c来实现这样的布局.
-2. 
+2. 在memlayout.h中我们定义了`PageInfo`结构体.通过该结构体,我们一方面管理剩余可用物理内存,另一方面管理物理内存页的引用计数.`PageInfo`和物理页之间存在一一对应关系.
+3. `kclock.c`和`kclock.h`用于操作Pc时钟和CMOS RAM.在CMOS RAM中,BIOS保存了PC的物理内存大小等信息.
+4. `pmap.c`中的代码需要读取CMOS RAM,以知晓当前可用的物理内存大小.在jos中,这部分代码已经完成了.
+5. 请注意阅读`memlayout.h`,`pmap.h`和`mmu.h`.我们需要理解其中的定义,才能顺利完成课程.
