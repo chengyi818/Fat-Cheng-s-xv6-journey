@@ -7,6 +7,7 @@
 完成`kern/pmap.c`中的如下函数:
 1. boot_alloc()
 2. mem_init()
+    直到函数`check_page_free_list()`
 3. page_init()
 4. page_alloc()
 5. page_free()
