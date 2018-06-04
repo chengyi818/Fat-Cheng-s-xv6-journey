@@ -26,3 +26,8 @@ Software             |              |-------->|           |---------->  RAM
             Virtual                   Linear                Physical
 ```
 
+---
+
+C语言中的指针代表的是虚拟地址中的段内偏移.在`boot/boot.S`中,我们通过`lgdt gdtdesc`指令载入了Global Descriptor Table (GDT).仔细观察`gdtdesc`的定义,我们会发现所有段的起始地址均为0,而限制均为0xffffffff,因此此时段地址是不起作用的,也就是说线性地址此时和虚拟地址相等.
+
+在Lab3中,我们将会涉及到通过GDT来设置特权等级.在Lab2中,我们将会聚焦于页表转换,也就是从线性地址转换为物理地址的过程.
