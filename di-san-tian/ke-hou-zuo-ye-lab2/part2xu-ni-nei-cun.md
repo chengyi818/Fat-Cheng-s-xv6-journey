@@ -1,6 +1,6 @@
 # Part2 虚拟内存
 
-## Exercise2 
+## Exercise 2 
 熟悉x86的保护模式架构,主要分为分段和分页两种机制.
 
 阅读[Intel 80386 Reference Programmer's Manual](https://pdos.csail.mit.edu/6.828/2017/readings/i386/toc.htm)中的第5和第6章.尤其是*5.2 Page Translation*和*6.4 Page-Level Protection*两小节.
@@ -31,3 +31,29 @@ Software             |              |-------->|           |---------->  RAM
 C语言中的指针代表的是虚拟地址中的段内偏移.在`boot/boot.S`中,我们通过`lgdt gdtdesc`指令载入了Global Descriptor Table (GDT).仔细观察`gdtdesc`的定义,我们会发现所有段的起始地址均为0,而限制均为0xffffffff,因此此时段地址是不起作用的,也就是说线性地址此时和虚拟地址相等.
 
 在Lab3中,我们将会涉及到通过GDT来设置特权等级.在Lab2中,我们将会聚焦于页表转换,也就是从线性地址转换为物理地址的过程.
+
+在Lab1 Part3`kern/entry.S`中,我们设置了一个简单的页表`entry_pgdir`,将物理内存0~4MB映射到虚拟地址`0xf0000000~0xf0400000`.在JOS下面的课程中,我们将映射256MB的物理内存,虚拟内存起始地址为`0xf0000000`.
+
+
+## Exercise 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
