@@ -53,12 +53,26 @@ JOS的代码中经常需要操作地址,有时是物理地址,有时是虚拟地
 在JOS中,我们可以将一个`uintptr_t`转化为一个指针,并直接使用.但是我们不能将一个`phyaddr_t`转化为一个指针直接使用,因为MMU会将所有的地址都当做虚拟地址处理.
 
 总结:
+
 | C type | Address type |
 | --- | --- |
 | T*  |	Virtual |
 | uintptr_t | 	Virtual|
 | physaddr_t | 	Physical|
 
+Q&A:
+下面x是哪种类型,`uintptr_t`还是`physaddr_t`?
+```
+	mystery_t x;
+	char* value = return_a_pointer();
+	*value = 10;
+	x = (mystery_t) value;
+```
+
+JOS有时在操作内存时,必须要知道内存的物理地址.比如在进行页表设置时,就需要分配物理内存,并初始化.然而内存并不能越过MMU,因此内核不能直接操作物理内存.
+
+为了操作物理内存,JOS采取的方法是将物理地址0开始的内存,线性地映射到了虚拟地址0xf000000.
+因此当我们想要操作物理地址x时,只需要操作将物理地址加上0xf000000从而得到虚拟地址,通过宏KADDR(x)可以简化这个操作.
 
 
 
