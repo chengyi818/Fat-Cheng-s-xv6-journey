@@ -53,13 +53,14 @@ JOS的代码中经常需要操作地址,有时是物理地址,有时是虚拟地
 在JOS中,我们可以将一个`uintptr_t`转化为一个指针,并直接使用.但是我们不能将一个`phyaddr_t`转化为一个指针直接使用,因为MMU会将所有的地址都当做虚拟地址处理.
 
 总结:
-```
 
-C type	Address type
-T*  	Virtual
-uintptr_t  	Virtual
-physaddr_t  	Physical
-```
+| --- | --- |
+| C type | Address type |
+| --- | --- |
+| T*  |	Virtual |
+| uintptr_t | 	Virtual|
+| physaddr_t | 	Physical|
+
 
 
 
