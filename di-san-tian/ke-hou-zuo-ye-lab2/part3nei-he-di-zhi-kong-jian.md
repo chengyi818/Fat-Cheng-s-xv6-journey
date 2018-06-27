@@ -21,7 +21,7 @@ JOS将32位的线性地址空间划为了两个部分.用户空间位于低地�
 完成函数`mem_init()`中`check_page()`之后的代码.完成后,代码应该通过`check_kern_pgdir()`和`check_page_installed_pgdir()`的检查.
 
 ### Q&A
-2. 下面的表格是page directory的示意图,看懂并且尽量填充.
+* 下面的表格是page directory的示意图,看懂并且尽量填充.
 
 Entry	| Base Virtual Address	| Points to (logically)
 --- | --- | ---
@@ -34,4 +34,4 @@ Entry	| Base Virtual Address	| Points to (logically)
 1 | 0x00400000 | ?
 0 | 0x00000000 | [see next question]
 
-3. 
+*  
