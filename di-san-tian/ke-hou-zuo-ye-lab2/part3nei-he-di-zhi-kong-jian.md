@@ -21,7 +21,7 @@ JOS将32位的线性地址空间划为了两个部分.用户空间位于低地�
 完成函数`mem_init()`中`check_page()`之后的代码.完成后,代码应该通过`check_kern_pgdir()`和`check_page_installed_pgdir()`的检查.
 
 ### Q&A
-* Q: 下面的表格是page directory的示意图,看懂并且尽量填充.
+* Q2: 下面的表格是page directory的示意图,看懂并且尽量填充.
 
 Entry	| Base Virtual Address	| Points to (logically)
 --- | --- | ---
@@ -34,8 +34,12 @@ Entry	| Base Virtual Address	| Points to (logically)
 1 | 0x00400000 | ?
 0 | 0x00000000 | [see next question]
 
-* Q: 内核地址空间和用户地址空间在同一个地址空间中,使用同一个page directory进行地址转换,为什么用户代码不能访问内核地址空间?换言之,是什么机制在保护内核地址空间?
+* Q3: 内核地址空间和用户地址空间在同一个地址空间中,使用同一个page directory进行地址转换,为什么用户代码不能访问内核地址空间?换言之,是什么机制在保护内核地址空间?
 
-* A: pte中的低12位是可以用于标记权限的,就是通过其中的`PTE_U`这个标志位来控制的.
+* A3: pte中的低12位是可以用于标记权限的,就是通过其中的`PTE_U`这个标志位来控制的.
 
-* 
+* Q4: JOS最大可支持的物理内存是多少?为什么?
+
+* Q5: JOS使用了多少内存用于管理内存?假如我们的物理内存为最大可支持大小,管理结构会发生什么问题?
+
+* Q6: 再次浏览`kern/entry.S`和`kern/entrypgdir.c`.当我们开启分页功能后,EIP此时仍然指向一个低地址(稍高于1MB).我们在何处将EIP转移到了高于`KERNBASE`的地址呢?是什么机制让我们可以在EIP运行于高地之后,仍然可以切换到低地址呢?为什么有必要将EIP从低地址切换到高地址?
