@@ -45,6 +45,7 @@
   * [课后作业\_Lab2](di-san-tian/ke-hou-zuo-ye-lab2.md)
     * [Part1\_物理内存页管理](di-san-tian/ke-hou-zuo-ye-lab2/part1wu-li-nei-cun-ye-guan-li.md)
     * [Part2\_虚拟内存](di-san-tian/ke-hou-zuo-ye-lab2/part2xu-ni-nei-cun.md)
+    * [Part3\_内核地址空间](di-san-tian/ke-hou-zuo-ye-lab2/part3nei-he-di-zhi-kong-jian.md)
 * [第四天](di-si-tian.md)
   * [课前准备](di-si-tian/ke-qian-zhun-bei.md)
   * [第四课](di-si-tian/di-si-ke.md)
