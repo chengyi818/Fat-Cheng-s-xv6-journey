@@ -63,4 +63,5 @@
     * [PPT](di-qi-tian/di-qi-ke/ppt.md)
     * [使用虚拟内存](di-qi-tian/di-qi-ke/shi-yong-xu-ni-nei-cun.md)
   * [课后作业\_xv6\_CPU\_alarm](di-qi-tian/ke-hou-zuo-ye-xv6-cpu-alarm.md)
+* [第八天](di-ba-tian.md)
 
