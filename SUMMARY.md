@@ -65,4 +65,5 @@
   * [课后作业\_xv6\_CPU\_alarm](di-qi-tian/ke-hou-zuo-ye-xv6-cpu-alarm.md)
 * [第八天](di-ba-tian.md)
   * [课前准备](di-ba-tian/ke-qian-zhun-bei.md)
+  * [第八课](di-ba-tian/di-ba-ke.md)
 
