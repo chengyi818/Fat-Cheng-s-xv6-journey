@@ -55,4 +55,65 @@
 2. 因此,软件不得不放下手头的工作并且回应硬件.
 
 ### 陷阱门来源?
+1. 硬件中断: 当硬件数据准备完成或者完成一个命令后
+2. 异常: 当执行指令过程中,发生page fault或者除0等错误时
+3. 系统调用
+4. IPI: 内核CPU间通信,比如刷新TLB.
+
+### 硬件中断来源
+
+```
+ CPUs, LAPICs, IOAPIC, devices
+ data bus
+ interrupt bus
+```
+
+硬件中断的作用是通知内核发出中断的硬件有事务需要处理,与此相关的是,内核中的驱动则用于处理这些事务.通常硬件中断都是由相应的驱动来进行处理,比如磁盘中断,网卡中断等.但也有一些特殊的硬件中断,比如线程调度,poll等.
+
+### 内核trap()是如何知道中断来自哪个设备?
+比如`tf->trapno == T_IRQ0 + IRQ_TIMER`来自哪个设备?
+
+1. 内核通过设置LAPIC和IOPIC来设置中断路由,即硬件中断发往哪个CPU.同时设置了每个中断向量所对应的中断处理函数.比如timer的中断向量号为32.
+  
+  1.1 `page fault`同样有自己的中断向量号.
+  1.2 `LAPIC(local advanced programmable interrupt control)`和`IOAPIC(input output advanced programmable interrupt control)`是计算机硬件的标准组成部分.
+  1.3 每个CPU都有一个LAPIC.
+  
+2. IDT(interrupt descriptor table)是一个地址数组,通过中断向量号在IDT中可以找到对应的中断处理函数地址.
+  2.1 IDT的格式是Intel也就是CPU制造商定义的,内核可以修改其中的内容.
+  
+3. 每个中断向量的处理最终都会到`trapasm.S/alltraps`中.
+4. CPU运行中可能发生很多种陷阱,前32号的中断向量都有特定的用途.
+5. xv6中系统调用使用的中断向量号为64(0x40)
+6. 中断向量号表明了中断的实际来源.
+
+### 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----
 
