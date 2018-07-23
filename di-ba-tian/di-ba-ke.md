@@ -114,11 +114,14 @@
   * 每个CPU均可以运行不同的进程,并在不同的内核栈上处理中断
   
 3. `proc.c/scheduler()`
+  * 每个CPU独立调用,用于寻找合适的进程供CPU运行.
+  * 其中将会调用`switchuvm()`
 
 4. `vm.c/switchuvm()`
-  * 设置CPU使用的内核栈
-  * 设置内核使用的page table
+  * 根据将要运行的proc, 设置CPU使用的内核栈
+  * 根据将要运行的proc, 设置内核使用的page table
   
+## 思考题
 
 
 
