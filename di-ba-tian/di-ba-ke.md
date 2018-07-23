@@ -113,7 +113,11 @@
   * 每个CPU均有对应的TSS
   * 每个CPU均可以运行不同的进程,并在不同的内核栈上处理中断
   
-3. 
+3. `proc.c/scheduler()`
+
+4. `vm.c/switchuvm()`
+  * 设置CPU使用的内核栈
+  * 设置内核使用的page table
   
 
 
