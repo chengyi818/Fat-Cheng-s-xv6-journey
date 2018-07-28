@@ -69,4 +69,5 @@
   * [课后作业\_线程与锁](di-ba-tian/ke-hou-zuo-ye-xian-cheng-yu-suo.md)
 * [第九天](di-jiu-tian.md)
   * [课前准备](di-jiu-tian/ke-qian-zhun-bei.md)
+  * [第九课](di-jiu-tian/di-jiu-ke.md)
 
