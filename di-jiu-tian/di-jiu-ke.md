@@ -73,7 +73,7 @@
 2. ide硬件设备同一时间只能处理一个请求,因此也是需要保护的临界区
 3. `ide.c`仅包含了一个锁`idelock`.因此这是一个比较大的锁,并没有实现更细的粒度.
 
-## 锁的实现
+## 锁的实现 V1
 Q. 以下面的方式实现锁是否可行?为什么?
 ```
     struct lock { int locked; }
@@ -99,14 +99,48 @@ A: 显然是不行的,因此查询,修改locked的值,并不是一个原子操�
 
 2. 硬件模拟如下:
 ```
-
+    lock addr globally (other cores cannot use it)
+    temp = *addr
+    *addr = %eax
+    %eax = temp
+    unlock addr
 ```
 
+3. 事实上,我们对锁的原子操作是由x86的硬件提供指令完成的.目前大多数体系结构都有类似的指令.
 
+## 锁的实现 V2
+1. 锁的实际实现如下:
+```
+  acquire(l){
+    while(1){
+      if(xchg(&l->locked, 1) == 0){
+        break
+      }
+    }
+  }
+```
 
+2. 如果锁已经被锁住了,那么xchg后仍然是1,所以将会继续循环.
+3. 如果锁没有被锁住,并且多个core在同时抢锁,那么只会有一个core能看到xchg返回0,而其余core仍然返回1.
+4. 这就是所谓的`自旋锁`,因为所有等待的core并没有让出CPU,而是在不停的循环尝试获得锁.
 
+## xv6 自旋锁的实现
+1. 头文件`spinlock.h`,源文件`spinlock.c`
+2. 注意阅读`acquire()`和`release()`的实现
+3. 在`acquire()`时,为什么需要禁止中断?
 
+## 指令重排
+1. 假设我们实现了一个本地的锁,用于在两个核之间保护一个临界区,模拟代码如下:
+```
+  Core A:          Core B:
+    locked = 1
+    x = x + 1      while(locked == 1)
+    locked = 0       ...
+                   locked = 1
+                   x = x + 1
+                   locked = 0
 
+```
 
 
 
