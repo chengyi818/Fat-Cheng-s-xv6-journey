@@ -18,3 +18,5 @@ A. 两次调用`acquire()`时,在第二次调用将会检查,导致走到`panic(
 6. 换句话说,Core A上的线程T1持有自旋锁L后,该自旋锁L将会和Core A相绑定.
 7. 如果此时线程T1被调度,Core A运行一个新的线程T2,而T2同样去获取锁L的话,将会出现`panic acquire`.因为在此之前Core A已经持有了锁L,并且还未释放.
 8. 即使没有新的线程在Core A上去尝试获取锁L,如果线程T1被调度到另外一个Core B上去运行,在T1尝试释放锁L时,将会发生`panic release`.因为此时锁L所绑定的Core是Core A.
+
+## 
