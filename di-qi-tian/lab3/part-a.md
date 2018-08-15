@@ -48,4 +48,96 @@ struct Env {
                                        \--- ENVX(eid) --/
 
 ```
+如图,一个`env_id`主要由两部分组成,`Uniqueifier`和`Environment Index`.其中`Uniqueifier`每次都会发生变化,而`Environment Index`则代表了使用了`envs`数组中的index.因此即使`Env`结构体被重复使用,进程的`env_id`值也不会相同.
+
+
+### env_parent_id
+该字段保存了进程的父进程的id.通过这种方式,进程就被组成为一个进程树.当需要判断进程是否有权限进行某个操作时,通过进程树可以进行权限判断.
+
+### env_type
+该字段用于标识特殊的进程.大部分情况下,该字段为`ENV_TYPE_USER`.后面的实验中,将会介绍其他的进程类型
+
+### env_status
+这个就是常说的进程状态了.在JOS中,进程有如下状态.
+* ENV_FREE
+	进程未激活,即Env结构体在env_free_list链表中
+	
+* ENV_RUNNABLE
+	进程准备就绪,正等待内核调度运行
+	
+* ENV_RUNNING
+	进程正在运行 
+
+* ENV_NOT_RUNNING
+	进程阻塞,此时进程已激活.但是还未准备就绪.比如正在等待IO.
+	
+* ENV_DYING
+	僵尸进程,当僵尸进程陷入内核后,将被内核释放.
+	
+### env_pgdir
+进程使用的页表
+
+
+与Unix进程类似,JOS进程同样拥有线程和地址空间的概念.线程主要是由`env_tf`来定义,而地址空间则由`env_pgdir`来定义.为了运行一个进程,内核必须设置好`env_tf`和`env_pgdir`.
+
+JOS中的`Struct Env`和xv6中的`struct proc`类似.区别在于xv6中每个proc都拥有自己的内核栈,多个进程可以同时陷入内核.而JOS同一时间只能有个一个进程陷入内核,因此可以共用一个内核栈.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
 
