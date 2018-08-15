@@ -82,6 +82,19 @@ struct Env {
 
 JOS中的`Struct Env`和xv6中的`struct proc`类似.区别在于xv6中每个proc都拥有自己的内核栈,多个进程可以同时陷入内核.而JOS同一时间只能有个一个进程陷入内核,因此可以共用一个内核栈.
 
+---
+
+## 分配进程管理数组
+在Lab2中,我们通过`mem_init()`来初始化`pages[]`数组.该数组用于管理物理页内存的分配.现在我们需要修改`mem_init()`来分配一个相似的`envs`数组,来管理进程结构体.
+
+### Excercise 1
+修改`kern/pmap.c`中的`mem_init()`函数来分配和初始化`envs`数组.数组中包含了NENV个Env结构体.和`pages`数组类似,`envs`数组同样需要映射到`UENVS`(定义在inc/memlayout.h),这样用户进程才能够访问这个数组.
+
+修改完成后,代码应该可以通过`check_kern_pgdir()`的检查.
+
+---
+
+## 创建和运行进程 
 
 
 
