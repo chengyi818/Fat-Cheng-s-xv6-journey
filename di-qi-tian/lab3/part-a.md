@@ -160,7 +160,18 @@ panic("env_alloc: %e", r);
 env_alloc: out of memory
 ```
 
-
+### 用户进程调用流程
+```
+start (kern/entry.S)
+i386_init (kern/init.c)
+	cons_init
+	mem_init
+	env_init
+	trap_init (still incomplete at this point)
+	env_create
+	env_run
+		env_pop_tf
+```
 
 
 
