@@ -95,9 +95,45 @@ JOS中的`Struct Env`和xv6中的`struct proc`类似.区别在于xv6中每个pro
 ---
 
 ## 创建和运行进程 
+下面我们将完善`kern/env.c`以运行一个用户进程.
 
+此时,我们还没有文件系统,因此用户进程所使用的二进制文件将被静态打包到Kernel文件中.Lab3的`GNUmakefile`将在`obj/user`目录中生成一系列二进制文件.如果我们再稍微深入一点,在`kern/Makefrag`中,我们看到首先定义了变量`KERN_BINFILES`,随后通过命令`ld -b binary $(KERN_BINFILES)`将这些二进制文件打包到内核文件中.我们再来看看内核文件的符号表`obj/kern/kernel.sym`,我们将看到如下的一些符号:
 
+```
+f0119356 D _binary_obj_user_hello_start
+f0120b56 D _binary_obj_user_buggyhello_start
+f0120b56 D _binary_obj_user_hello_end
+f012835e D _binary_obj_user_buggyhello2_start
+f012835e D _binary_obj_user_buggyhello_end
+f012fb7e D _binary_obj_user_buggyhello2_end
+f012fb7e D _binary_obj_user_evilhello_start
+f0137382 D _binary_obj_user_evilhello_end
+f0137382 D _binary_obj_user_testbss_start
+f013eb9e D _binary_obj_user_divzero_start
+f013eb9e D _binary_obj_user_testbss_end
+f01463b6 D _binary_obj_user_breakpoint_start
+f01463b6 D _binary_obj_user_divzero_end
+f014dbbe D _binary_obj_user_breakpoint_end
+f014dbbe D _binary_obj_user_softint_start
+f01553c2 D _binary_obj_user_badsegment_start
+f01553c2 D _binary_obj_user_softint_end
+f015cbca D _binary_obj_user_badsegment_end
+f015cbca D _binary_obj_user_faultread_start
+f01643ce D _binary_obj_user_faultread_end
+f01643ce D _binary_obj_user_faultreadkernel_start
+f016bbda D _binary_obj_user_faultreadkernel_end
+f016bbda D _binary_obj_user_faultwrite_start
+f01733e2 D _binary_obj_user_faultwrite_end
+f01733e2 D _binary_obj_user_faultwritekernel_start
+f017abee D _binary_obj_user_faultwritekernel_end
+```
+正是通过这些符号,内核可以访问这些二进制文件.
 
+### Exercise 2
+在`kern/init.c`中的`i386_init()`函数将会运行创建用户进程并运行二进制文件.当然此时,它们还是一个半成品,你需要完成`env.c`中的如下函数:
+
+* env_init()
+	
 
 
 
