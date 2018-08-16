@@ -133,7 +133,32 @@ f017abee D _binary_obj_user_faultwritekernel_end
 在`kern/init.c`中的`i386_init()`函数将会运行创建用户进程并运行二进制文件.当然此时,它们还是一个半成品,你需要完成`env.c`中的如下函数:
 
 * env_init()
+	初始化envs数组中的所有Env结构体,同时把它们加入env_free_list管理.同时,我们会调用`env_init_percpu()`来设置CPU的分段硬件.
 	
+* env_setup_vm()
+	为用户进程创建一个页目录并初始化
+	
+* region_alloc()
+	为用户进程分配和映射物理内存
+
+* load_icode()
+	解析ELF文件,并将其内容载入用户进程空间
+	
+* env_create()
+	调用env_alloc创建一个用户进程,然后调用load_icode载入ELF镜像
+	
+* env_run()
+	运行一个指定的用户进程
+	
+备注:
+在完成上述编码时,使用`cprintf`的`%e`命令可以打印出错误码所对应的错误信息,这有助于我们调试代码.举例如下:
+```
+r = -E_NO_MEM;
+panic("env_alloc: %e", r);
+
+输出:
+env_alloc: out of memory
+```
 
 
 
