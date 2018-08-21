@@ -180,17 +180,7 @@ i386_init (kern/init.c)
 
 目前我们可以通过使用gdb来判断我们是否进入了用户空间.通过`make qemu-gdb`命令,使用gdb来调试JOS,并在`env_pop_tf`设下断点.该函数是JOS进入用户空间前,最后运行的一个函数.使用命令`si`来单步调试,CPU在执行指令`iret`后,将进入用户空间.
 
-在用户空间第一条执行的指令应该是`lib/entry.S`中`label start`中的第一条指令`cmpl $USTACKTOP, %esp`.现在通过命令`b *0x...`在`hello`程序的`sys_cputs()`函数中的`int $0x30`处设下断点.具体函数
-
-
-
-
-
-
-
-
-
-
+在用户空间第一条执行的指令应该是`lib/entry.S`中`label start`中的第一条指令`cmpl $USTACKTOP, %esp`.现在通过命令`b *0x...`在`hello`程序的`sys_cputs()`函数中的`int $0x30`处设下断点.具体函数地址请参考`obj/user/hello.asm`.这个`int`指令是请求内核在console上显示字符.如果你无法执行到这里,说明之前的实现有问题,请返回检查并修正.
 
 
 ---
