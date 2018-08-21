@@ -161,6 +161,7 @@ env_alloc: out of memory
 ```
 
 ### 用户进程调用流程
+下图是用户进程调用示意图,请确保理解了下图的每个步骤.
 ```
 start (kern/entry.S)
 i386_init (kern/init.c)
@@ -173,6 +174,13 @@ i386_init (kern/init.c)
 		env_pop_tf
 ```
 
+当我们完成了Exercise 2的编码之后,我们可以通过QEMU来运行.程序将一直执行`hello`程序,直接该程序调用`int`系统调用.此时JOS还没有配置硬件中断处理,因此用户空间无法调用内核.当CPU遇到无法处理的系统调用中断时,将会产生一个通用保护异常.紧接着CPU会发现通用保护异常也无法处理,将会产生一个`double fault`异常,这个异常当然也无法处理.CPU最终放弃处理,并抛出`triple fault`.
+
+通常此时CPU将会重置,系统将重启.对于内核开发而言,此时重启将不利于我们观察和debug,因此JOS的QEMU经过了特殊定制,此时将打印寄存器和`triple fault`信息.
+
+目前我们可以通过使用gdb来判断我们是否进入了用户空间.通过`make qemu-gdb`命令,使用gdb来调试JOS,并在`env_pop_tf`设下断点.该函数是JOS进入用户空间前,最后运行的一个函数.使用命令`si`来单步调试,CPU在执行指令`iret`后,将进入用户空间.
+
+在用户空间第一条执行的指令应该是`lib/entry.S`中`label start`中的第一条指令`cmpl $USTACKTOP, %esp`.
 
 
 
@@ -185,7 +193,9 @@ i386_init (kern/init.c)
 
 
 
+---
 
+## 处理中断和异常
 
 
 
