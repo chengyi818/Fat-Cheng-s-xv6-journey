@@ -186,10 +186,15 @@ i386_init (kern/init.c)
 ---
 
 ## 处理中断和异常
+目前用户空间执行`int $0x30`是死路一条:如果CPU进入用户空间,目前还没有返回的办法.接下来,我们将要实现基本的异常和系统调用处理,这样内核才能从用户空间程序手中重新获得CPU的控制权.
 
+首先,你需要熟悉x86的中断和异常机制.
 
+### Exercise 3
+阅读[80386 Programmer's Manual](https://pdos.csail.mit.edu/6.828/2017/readings/i386/c09.htm) 第九章.
+或者[IA-32 Developer's Manual](https://pdos.csail.mit.edu/6.828/2017/readings/ia32/IA32-3A.pdf) 第五章.
 
-
+在本Lab中,我们使用中断,异常这些术语,它们的定义遵循了Intel的规定.但是在操作系统中,异常,陷阱,中断,错误,终止等并没有特定的含义,所以如果你在其他地方看到这些术语完全可能有不同的含义.
 
 
 
