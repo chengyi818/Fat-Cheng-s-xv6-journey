@@ -310,7 +310,7 @@ CPU在用户态和内核态都可能发生中断异常.只有当CPU从用户态�
 每个异常和中断在`trapentry.S`中,都应该有自己对应的处理函数.`trap_init()`函数中需要在IDT中,设置这些中断处理函数.每个中断处理函数首先需要构建一个`inc/trap.h struct Trapframe`结构体,然后以`struct Trapframe`为参数调用`trap.c trap()`函数.`trap()`将根据中断号调用具体的中断处理逻辑.
 
 ### Exercise 4
-完善`trapentry.S`和`trap.c`,完成上面的Feature.宏`TRAPHANDLER`和`TRAPHANDLER_NOEC`对于定义中断处理函数很有帮助.中断号的定义在`inc/trap.h`中,以T_*开头.我们需要在`trapentry.S`中增加`inc/trap.h`中所定义的trap的入口函数.同时,我们需要完成`_alltraps`,以供`TRAPHANDLER`调用.最后,我们需要在`trap_init()`函数
+完善`trapentry.S`和`trap.c`,完成上面的Feature.宏`TRAPHANDLER`和`TRAPHANDLER_NOEC`对于定义中断处理函数很有帮助.中断号的定义在`inc/trap.h`中,以T_*开头.我们需要在`trapentry.S`中增加`inc/trap.h`中所定义的trap的入口函数.同时,我们需要完成`_alltraps`,以供`TRAPHANDLER`调用.最后,我们需要在`trap_init()`函数中设置IDT,`SETGATE`此时会比较有帮助.
 
 
 
