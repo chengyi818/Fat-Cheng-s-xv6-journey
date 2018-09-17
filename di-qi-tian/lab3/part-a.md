@@ -312,6 +312,8 @@ CPU在用户态和内核态都可能发生中断异常.只有当CPU从用户态�
 ### Exercise 4
 完善`trapentry.S`和`trap.c`,完成上面的Feature.宏`TRAPHANDLER`和`TRAPHANDLER_NOEC`对于定义中断处理函数很有帮助.中断号的定义在`inc/trap.h`中,以T_*开头.我们需要在`trapentry.S`中增加`inc/trap.h`中所定义的trap的入口函数.同时,我们需要完成`_alltraps`,以供`TRAPHANDLER`调用.最后,我们需要在`trap_init()`函数中设置IDT,`SETGATE`对完成代码有帮助.
 
+`_alltraps`需要完成的功能的有:
+1. 
 
 
 
