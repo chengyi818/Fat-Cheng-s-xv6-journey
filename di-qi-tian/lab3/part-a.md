@@ -313,10 +313,18 @@ CPU在用户态和内核态都可能发生中断异常.只有当CPU从用户态�
 完善`trapentry.S`和`trap.c`,完成上面的Feature.宏`TRAPHANDLER`和`TRAPHANDLER_NOEC`对于定义中断处理函数很有帮助.中断号的定义在`inc/trap.h`中,以T_*开头.我们需要在`trapentry.S`中增加`inc/trap.h`中所定义的trap的入口函数.同时,我们需要完成`_alltraps`,以供`TRAPHANDLER`调用.最后,我们需要在`trap_init()`函数中设置IDT,`SETGATE`对完成代码有帮助.
 
 `_alltraps`需要完成的功能的有:
-1. 
+1. 将寄存器的值压入内核栈,以填充`struct Trapframe`
+2. 将值GD_KD载入ds和es寄存器
+3. 将esp寄存器作为参数,
+4. 调用trap()函数
 
+考虑使用`pushal`指令来压入寄存器值,指令和`struct Trapframe`结构刚好一致.
 
+#### 测试
+通过调用`user`目录下的一些二进制文件来进行测试.比如`divzero`,`softinit`,`badsegment`.
 
+#### 挑战
+目前在`trapentry.S`和`trap.c`中,可能有大量的重复代码.重构这两个文件,修改`trapentry.S`中的宏,以自动生成一个数组供`trap.c`使用.
 
 
 
