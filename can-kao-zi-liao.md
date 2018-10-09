@@ -9,3 +9,9 @@
 Unix内核代码剖析
 
 汇编语言--王爽著
+
+# github参考repo
+[william-cheung](https://github.com/william-cheung/mit-6.828-2014)
+[SimpCosm](https://github.com/SimpCosm/6.828)
+[saffahyjp](https://github.com/saffahyjp/6.828)
+[kelwin](https://github.com/kelwin/6.828)
