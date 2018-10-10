@@ -55,12 +55,13 @@ page fault异常,中断号为14(T_PGFLT),是一个非常重要的异常.当CPU�
 通过命令`make run-hello`来运行用户程序`user/hello`.首先应该在console中打印出`hello, world`,然后在用户模式下触发`page fault`.如何结果不符合预期,或许是我们的实现有问题.
 
 ### 挑战
+使用`sysenter`和`sysexit`指令实现系统调用,而不是使用`int 0x30`和`iret`.
 
+`sysenter`/`sysexit`指令由英特尔设计,比`int/iret`更快.他们通过使用寄存器而不是堆栈,并预测分段寄存器的使用方式来实现这一点.这些指令的细节可以在英特尔参考手册第2B卷中找到.
 
+在JOS中添加对这些指令的支持的最简单方法是在`kern/trapentry.S`中添加一个`sysenter_handler`,它保存了足够的关于用户空间的信息以返回到用户空间,设置了内核环境,将参数传递给`syscall()`并直接调用`syscall()`.当`syscall()`返回,设置并运行`sysexit`指令.您还需要在`kern/init.c`中添加代码,以设置必要的`model specific`寄存器(MSRs).《AMD体系结构程序员手册》第2卷中的第6.1.2节和《英特尔参考手册》第2B卷中关于`SYSENTER`参考文件对相关MSRs进行了详细描述.你可以在[这里](http://ftp.kh.edu.tw/Linux/SuSE/people/garloff/linux/k6mod.c)找到`inc/x86.h wrmsr`是如何写入这些MSRs的.
 
-
-
-
+最后,必须更改`lib / syscall.c`以支持使用`sysenter`调用系统调用.
 
 
 
