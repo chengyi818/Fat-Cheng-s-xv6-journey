@@ -61,8 +61,20 @@ page fault异常,中断号为14(T_PGFLT),是一个非常重要的异常.当CPU�
 
 在JOS中添加对这些指令的支持的最简单方法是在`kern/trapentry.S`中添加一个`sysenter_handler`,它保存了足够的关于用户空间的信息以返回到用户空间,设置了内核环境,将参数传递给`syscall()`并直接调用`syscall()`.当`syscall()`返回,设置并运行`sysexit`指令.您还需要在`kern/init.c`中添加代码,以设置必要的`model specific`寄存器(MSRs).《AMD体系结构程序员手册》第2卷中的第6.1.2节和《英特尔参考手册》第2B卷中关于`SYSENTER`参考文件对相关MSRs进行了详细描述.你可以在[这里](http://ftp.kh.edu.tw/Linux/SuSE/people/garloff/linux/k6mod.c)找到`inc/x86.h wrmsr`是如何写入这些MSRs的.
 
-最后,必须更改`lib / syscall.c`以支持使用`sysenter`调用系统调用.
+最后,必须更改`lib / syscall.c`以支持使用`sysenter`调用系统调用.以下是`sysenter`指令的可能寄存器布局:
+```
+	eax                - syscall number
+	edx, ecx, ebx, edi - arg1, arg2, arg3, arg4
+	esi                - return pc
+	ebp                - return esp
+	esp                - trashed by sysenter
+```
 
+当使用GCC的内嵌汇编程序直接加载值时,会自动保存寄存器值.不要忘了push和pop你正在使用的其他寄存器,或者告诉内嵌汇编程序你正在使用它们.内嵌汇编程序不支持保存`%ebp`,因此您需要添加代码来保存和恢复它.通过使用`leal after_sysenter_label, %%esi`这样的指令,可以将返回地址放入`%esi`中.
+
+请注意,这仅支持4个参数,因此您需要保留旧的系统调用方法来支持5个参数系统调用.此外,由于这种快速调用凡是不会更新当前用户空间的的`TrapFrame`,因此不适用于我们在以后的Lab中添加的一些系统调用.
+
+在下一个实验中我们将启用异步中断,你可能需要重新修改这部分代码.具体来说,当返回到用户进程后,你需要允许中断,而`sysexit`并没有为你设置.
 
 
 
