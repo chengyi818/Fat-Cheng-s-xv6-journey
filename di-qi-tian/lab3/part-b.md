@@ -118,12 +118,26 @@ page fault异常,中断号为14(T_PGFLT),是一个非常重要的异常.当CPU�
 
 修改`kern/syscall.c`,对系统调用传入的参数进行安全检查.
 
+运行用户程序`user/buggyhello`.用户进程应该被销毁而内核不受影响.打印内容应该如下:
+```
+	[00001000] user_mem_check assertion failure for va 00000001
+	[00001000] free env 00001000
+	Destroyed the only environment - nothing more to do!
+```
 
+最后,修改`kern/kdebug.c`中的`debuginfo_eip()`函数,使用`user_mem_check`对`usd`,`stabs`,`stabstr`.如果现在运行`user/breakpoint`,应该能够在`kernel monitor`运行`backtrace`,同时在内核因`page fault`而死机之前看到`backtrace`追溯到`lib/libmain. c`.导致此`page fault`的原因是什么？你不需要修复它，但是你应该理解它为什么会发生。
 
+---
+## Exercise 10
+注意,我们刚刚实现的相同机制也适用于恶意用户应用程序(如`user/evillhello`).
 
-
-
-
+运行`user/evilhello`,用户进程应该被销毁,并且内核正确运行.我们将会看到如下打印信息:
+```
+	[00000000] new env 00001000
+	...
+	[00001000] user_mem_check assertion failure for va f010000c
+	[00001000] free env 00001000
+```
 
 
 
