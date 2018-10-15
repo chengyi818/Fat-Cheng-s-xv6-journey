@@ -88,6 +88,7 @@ page fault异常,中断号为14(T_PGFLT),是一个非常重要的异常.当CPU�
 将上述所需的代码添加到用户库中,然后启动内核.你应该可以看到`hello`程序首先打印出`hello, world`,然后打印出`i am environment 00001000`.
 然后`user/hello`将尝试调用`sys_env_destroy()`(`lib/libmain.c`和`lib/exit.c`)来退出.由于内核目前只支持一个用户环境,它应该报告它已经销毁了唯一的环境,然后进入`kernel monitor`.
 
+---
 
 
 
