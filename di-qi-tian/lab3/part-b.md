@@ -76,7 +76,17 @@ page fault异常,中断号为14(T_PGFLT),是一个非常重要的异常.当CPU�
 
 在下一个实验中我们将启用异步中断,你可能需要重新修改这部分代码.具体来说,当返回到用户进程后,你需要允许中断,而`sysexit`并没有为你设置.
 
+---
+## 用户模式模式
+用户程序的入口位于`lib/entry.S`.在经过一些设置后,主要是函数入参,将会调用位于`lib/libmain.c`的`libmain()`函数.我们需要修改`libmain()`函数来正确地初始化全局变量`thisenv`,指向当前进程位于`struct envs[]`中的结构体.`lib/entry.S`已经定义了`envs`,并指向`UENVS`.
 
+提示: 查看`inc/env.h`,并使用`sys_getenvid`.
+
+`libmain()`函数将调用`umain()`.在`hello`程序的情况下,它的定义位于`user/hello.c`.当打印完`hello, world`之后,`hello`程序尝试获取`thisenv->env_id`.这就是`Exercise 7`之后,我们的程序`page fault`的原因.在正确设置全局变量`thisenv`之后,`hello`程序应该会一切正常.如果仍然失败,那么可能是由于在Part A `pmap.c`中,UENVS设置的不对.
+
+## Exercise 8
+将上述所需的代码添加到用户库中,然后启动内核.你应该可以看到`hello`程序首先打印出`hello, world`,然后打印出`i am environment 00001000`.
+然后`user/hello`将尝试调用`sys_env_destroy()`(`lib/libmain.c`和`lib/exit.c`)来退出.由于内核目前只支持一个用户环境,它应该报告它已经销毁了唯一的环境,然后进入`kernel monitor`.
 
 
 
