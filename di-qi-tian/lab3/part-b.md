@@ -90,6 +90,8 @@ page fault异常,中断号为14(T_PGFLT),是一个非常重要的异常.当CPU�
 
 ---
 
+## Page faults和内核保护
+
 
 
 
