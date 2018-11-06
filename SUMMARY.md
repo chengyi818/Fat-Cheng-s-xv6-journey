@@ -78,5 +78,5 @@
   * [课前准备](di-shi-tian/ke-qian-zhun-bei.md)
   * [第十课](di-shi-tian/di-shi-ke.md)
   * [课后作业](di-shi-tian/ke-hou-zuo-ye.md)
-  * Lab 4
+  * [Lab 4](di-shi-tian/lab-4.md)
 
