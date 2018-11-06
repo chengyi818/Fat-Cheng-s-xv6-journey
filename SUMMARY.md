@@ -77,6 +77,6 @@
 * [第十天](di-shi-tian.md)
   * [课前准备](di-shi-tian/ke-qian-zhun-bei.md)
   * [第十课](di-shi-tian/di-shi-ke.md)
-  * 课后作业
+  * [课后作业](di-shi-tian/ke-hou-zuo-ye.md)
   * Lab 4
 
