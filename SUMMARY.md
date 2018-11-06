@@ -74,4 +74,5 @@
   * [课前准备](di-jiu-tian/ke-qian-zhun-bei.md)
   * [第九课](di-jiu-tian/di-jiu-ke.md)
   * [课后作业](di-jiu-tian/ke-hou-zuo-ye.md)
+* [第十天](di-shi-tian.md)
 
