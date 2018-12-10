@@ -64,6 +64,42 @@ homework 9深入思考
 
 ## 进程调度 
 
+### 进程
+一种抽象的虚拟机,好像拥有独立的CPU和内存,不会被其他进程所影响,进程间互相隔离.
+
+### 进程相关API
+```
+fork
+exec
+exit
+wait
+kill
+sbrk
+getpid
+```
+
+### 挑战: 进程数大于CPU核数
+1. 设想这样一个场景: CPU仅有2个核,而同时需要运行的进程有3个.
+
+2. 狼多肉少,因此需要复用这些CPU.相关概念包括: 时分,调度,上下文切换.
+
+### xv6的解决方法
+1. 每个进程包括一个用户态线程和一个内核态线程
+2. 每个CPU拥有一个调度器线程
+3. 支持多CPU
+
+### 什么是线程?
+1. 一个CPU执行状态的集合,包括寄存器和栈.
+
+### xv6进程切换概览
+```
+ user -> kernel thread (via system call or timer)
+  kernel thread yields, due to pre-emption or waiting for I/O
+  kernel thread -> scheduler thread
+  scheduler thread finds a RUNNABLE kernel thread
+  scheduler thread -> kernel thread
+  kernel thread -> user
+```   
 
 
 
