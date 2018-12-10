@@ -93,14 +93,43 @@ getpid
 
 ### xv6进程切换概览
 ```
- user -> kernel thread (via system call or timer)
+  user -> kernel thread (via system call or timer)
   kernel thread yields, due to pre-emption or waiting for I/O
   kernel thread -> scheduler thread
   scheduler thread finds a RUNNABLE kernel thread
   scheduler thread -> kernel thread
   kernel thread -> user
 ```   
+1. 用户态线程通过系统调用或者时钟中断进入内核态线程
+2. 内核态线程因为抢占或者IO等待,让出CPU
+3. 内核态线程切换到调度器线程
+4. 调度器线程确定一个处于RUNNABLE状态的内核态线程
+5. 调度器线程切换到新的内核态线程
+6. 内核态线程切换到新的用户态线程
 
+### xv6进程状态定义
+1. RUNNING 正在执行
+2. RUNNABLE 等待执行
+3. SLEEPING 睡眠等待
+4. ZOMBIE 僵尸状态,等待回收
+5. UNUSED 处于进程池中,等待被使用
+
+### 注意:
+1. xv6中很多内核态线程共用相同的内核地址空间,即使用相同的内核态页表.
+2. xv6中,每个进程仅有一个用户态线程
+3. 很多现代OS,比如Linux,支持多线程.即一个进程对应多个用户态线程.
+
+### 上下文切换是xv6中最困难的事之一
+1. 多核处理
+2. 锁
+3. 中断处理
+4. 进程终止
+
+---
+
+## 进程调度相关代码
+
+###  进程抢占示例
 
 
 
