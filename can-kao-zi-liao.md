@@ -6,7 +6,7 @@
 
 [国人翻译的2012年的xv6教材](https://github.com/ranxian/xv6-chinese)
 
-Unix内核代码剖析
+编码--隐匿在计算机背后的语言
 
 汇编语言--王爽著
 
@@ -15,3 +15,8 @@ Unix内核代码剖析
 [SimpCosm](https://github.com/SimpCosm/6.828)
 [saffahyjp](https://github.com/saffahyjp/6.828)
 [kelwin](https://github.com/kelwin/6.828)
+
+# 前置知识
+1. C语言基础
+2. 汇编基础
+3. Os基础概念
