@@ -127,11 +127,69 @@ getpid
 
 ---
 
-## 进程调度相关代码
+##  进程切换分析
+场景设置如下: 两个进程同时运行在单核CPU,进程将会发生切换.
 
-###  进程抢占示例
+### 时钟中断
+1. 这里主要需要了解的是,何时会发生进程切换?
+2. 主要代码位于`trap.c`,如下.当发生时钟中断时,会强制当前进程让出CPU,进行一次进程调度.
+```
+  // Force process to give up CPU on clock tick.
+  // If interrupts were on while locks held, would need to check nlock.
+  if(myproc() && myproc()->state == RUNNING &&
+     tf->trapno == T_IRQ0+IRQ_TIMER)
+    yield();
+```
+3. `yield()`会将当前进程状态改为`RUNNABLE`,当前进程会等待下次被调度运行.
+4. 然后将执行`sched()`,首先将进行一系列检查,核心代码如下.
+```
+  swtch(&p->context, mycpu()->scheduler);
+```
 
+### swtch: 切换到调度器上下文
+1. 什么是上下文context? 上下文本质上一组内核线程的寄存器状态.
+2. xv6的context一直存在于栈上
+3. 上下文指针总是指向%esp栈顶
+4. 用户线程的寄存器状态是以`trapframe`的形式保存于栈中.
+5. `proc.h`中,context的定义:
+```
+// Saved registers for kernel context switches.
+// Don't need to save all the segment registers (%cs, etc),
+// because they are constant across kernel contexts.
+// Don't need to save %eax, %ecx, %edx, because the
+// x86 convention is that the caller has saved them.
+// Contexts are stored at the bottom of the stack they
+// describe; the stack pointer is the address of the context.
+// The layout of the context matches the layout of the stack in swtch.S
+// at the "Switch stacks" comment. Switch doesn't save eip explicitly,
+// but it is on the stack and allocproc() manipulates it.
+struct context {
+  uint edi;
+  uint esi;
+  uint ebx;
+  uint ebp;
+  uint eip;
+};
+```
 
+6. `swtch(from, to)`. 将当前线程的寄存器压栈,并将%esp保存到`from`中.
+然后从`to`中获取%esp,并将寄存器出栈,最后调用ret获取新的eip.从而完成线程切换.
+
+### scheduler() 调度器线程
+1. 在上一次`scheduler()`调度了一个进程时,执行代码为`swtch(&(c->scheduler), p->context);`.此时`eip`指向下一条指令地址.
+2. 当切换到`scheduler()`后,第一条执行的代码为`switchkvm();`
+3. 首先,将会切换为内核页表,将当前CPU执行的进程置空.
+4. 其次,将会进入for循环,寻找到一个`RUNNABLE`进程.然后调用`switchuvm()`设置TSS和页表.
+5. 最后,再次调用`swtch()`,从调度器线程切换到新进程的内核线程.
+6. 将切换完成后,`scheduler()`线程的栈顶又是一个context.等待下一次执行调度任务.
+7. 对于新进程而言,将从`swtch(&p->context, mycpu()->scheduler);`后开始运行.
+
+#### Q&&A
+1. xv6的调度策略是怎样的?
+答: 当前调度策略很简单,就是从进程管理结构体`ptable`的头部向尾部遍历,执行第一个`RUNNABLE`进程.
+
+2. 刚刚执行完的进程,有可能被立即调度么?换言之,是否存在进程饿死的现象?
+答: 有可能被立即调度执行,即存在进程饿死的现象.比如old进程占据了`ptable.proc[]`
 
 
 
