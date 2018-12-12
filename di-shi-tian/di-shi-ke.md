@@ -211,7 +211,9 @@ struct context {
 * 两者通过`ptable.lock`来协同工作
 * 一般的线程切换并没有这样的先后顺序
 
+#### 我们如何确定`scheduler()`线程已经准备好让我们`swtch()`进入?
 
+#### 除了`swtch()`,还有其他地方会进入`scheduler()`线程么?
 
 
 
