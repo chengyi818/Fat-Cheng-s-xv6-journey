@@ -13,7 +13,44 @@ _uthread: uthread.o uthread_switch.o
 		$(OBJDUMP) -S _uthread > uthread.asm
 ```
 
-3. 
+3. 将`_uthread`添加到xv6 Makefile中的`UPROGS`.
+4. 运行xv6,在xv6 shell中执行`uthread`.xv6 内核将会打印出`page fault`.
+
+### 目标
+1. 我们的目标是通过完成`thread_switch.S`,来使得在单核情况下,打印信息如下:
+```
+~/classes/6828/xv6$ make CPUS=1 qemu-nox
+dd if=/dev/zero of=xv6.img count=10000
+10000+0 records in
+10000+0 records out
+5120000 bytes transferred in 0.037167 secs (137756344 bytes/sec)
+dd if=bootblock of=xv6.img conv=notrunc
+1+0 records in
+1+0 records out
+512 bytes transferred in 0.000026 secs (19701685 bytes/sec)
+dd if=kernel of=xv6.img seek=1 conv=notrunc
+307+1 records in
+307+1 records out
+157319 bytes transferred in 0.003590 secs (43820143 bytes/sec)
+qemu -nographic -hdb fs.img xv6.img -smp 1 -m 512 
+Could not open option rom 'sgabios.bin': No such file or directory
+xv6...
+cpu0: starting
+init: starting sh
+$ uthread
+my thread running
+my thread 0x2A30
+my thread running
+my thread 0x4A40
+my thread 0x2A30
+my thread 0x4A40
+my thread 0x2A30
+my thread 0x4A40
+....
+```
+
+### 分析
+1. 
 
 
 
