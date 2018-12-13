@@ -60,10 +60,57 @@ my thread 0x4A40
   * 这样当`uthread_switch`返回后,将执行`next_thread`,且为`current_thread`.
 5. `thread_create`创建了一个新的线程,它提供了`uthread_switch`应该如何实现的提示.
 6. `uthread_switch`使用`pushal`和`popal`来一次性push或restore全部的8个寄存器.
-7. `uthread_create`模拟了全部8个寄存器的值,全部为0.
+7. `uthread_create`模拟了全部8个寄存器的值,即32个字节,全部为0.
+8. 如下是`struct thread`在内存中的布局:
+```
+    --------------------
+    | 4 bytes for state|
+    --------------------
+    | stack size bytes |
+    | for stack        |
+    --------------------
+    | 4 bytes for sp   |
+    --------------------  <--- current_thread
+         ......
 
-
-
+         ......
+    --------------------
+    | 4 bytes for state|
+    --------------------
+    | stack size bytes |
+    | for stack        |
+    --------------------
+    | 4 bytes for sp   |
+    --------------------  <--- next_thread
+```
+9. `current_thread`和`next_thread`即指向`struct thread`的首地址.
+10. 如果我们希望修改`current_thread`指向的`struct thread`中的`sp`的值,汇编代码如下:
+```
+   movl current_thread, %eax
+   movl %esp, (%eax)
+```
+11. 以上汇编代码会将%esp寄存器中的值赋给`current_thread->sp`,这是因为`sp`的起始地址就是`current_thread`,还记得上面`struct thread`所展示的内存布局图么?
+12. 在编译完成后,我们可以通过`uthread.asm`来学习相关的汇编代码.
+13. 为了开发调试,我们还可以单步调试`uthread_switch`,以下是操作方法:
+```
+(gdb) symbol-file _uthread
+Load new symbol table from "/Users/kaashoek/classes/6828/xv6/_uthread"? (y or n) y
+Reading symbols from /Users/kaashoek/classes/6828/xv6/_uthread...done.
+(gdb) b thread_switch
+Breakpoint 1 at 0x204: file uthread_switch.S, line 9.
+(gdb) 
+```
+14. 以上添加的断点,可能在运行`uthread`之前就被触发,请问是为什么?
+15. 当我们添加断点之后,运行`uthread`,gdb将会在`uthread_switch`处停止,我们可以通过如下方法查看`uthread`的状态.
+```
+(gdb) p/x next_thread->sp
+$4 = 0x4ae8
+(gdb) x/9x next_thread->sp
+0x4ae8 :      0x00000000      0x00000000      0x00000000      0x00000000
+0x4af8 :      0x00000000      0x00000000      0x00000000      0x00000000
+0x4b08 :      0x000000d8
+```
+16. 
 
 
 
