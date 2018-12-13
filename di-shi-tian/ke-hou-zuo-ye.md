@@ -51,7 +51,16 @@ my thread 0x4A40
 
 ### 分析
 1. `uthread.c`创建了两个线程,并在他们之间来回切换.每个线程都会打印`my thtread……`,然后让出CPU给其他线程运行机会.
-2. 
+2. 为了观察到上述现象,我们需要完成`uthread_switch.S`.当然在此之前,我们还需要了解`uthread.c`是如何使用`uthread_switch`的.
+3. `uthread.c`中,有两个重要的全局变量: `current_thread`和`next_thread`.它们各自指向一个`thread`结构体.`thread`结构体从高到底,依次为线程状态,线程栈和栈顶指针保存区.
+4. `uthread_switch`的任务是:
+  * 保存当前线程状态到`current_thread`.
+  * 从`next_thread`中恢复新的线程状态
+  * 将`current_thread`指向`next_thread`所指向的位置.
+  * 这样当`uthread_switch`返回后,将执行`next_thread`,且为`current_thread`.
+5. `thread_create`创建了一个新的线程,它提供了`uthread_switch`应该如何实现的提示.
+6. `uthread_switch`使用`pushal`和`popal`来一次性push或restore全部的8个寄存器.
+7. `uthread_create`模拟了全部8个寄存器的值,全部为0.
 
 
 
