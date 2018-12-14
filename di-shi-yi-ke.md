@@ -31,4 +31,32 @@
 
 ---
 
-## 
+## 课后作业: 用户线程上下文切换
+
+### gdb调试
+```
+  (gdb) symbol-file _uthread
+  (gdb) b thread_switch
+  (gdb) c
+  uthread
+  (gdb) p/x next_thread->sp
+  (gdb) x/9x next_thread->sp
+   (gdb) p/x &mythread
+```
+
+### 栈上第九项的值代表什么含义?
+答: 存放的是线程的可执行代码地址,该地址会被载入到CPU的eip寄存器中.
+
+### 为什么需要将next_thread拷贝到current_thread?
+答: current_thread标识了当前正在运行的线程,当线程切换完成,需要修改current_thread的值,以保证下次thread_schedule运行正常.
+
+### 为什么uthread_yield只会在用户空间调度,而不是调用到内核?
+答: 因为该函数仅存在于用户空间,并没有使用到系统调用.因此不会陷入内核.
+
+### 当uthread因系统调用阻塞时,会发生什么?
+答: uthread在内核中仅存在一个线程,是在用户空间模拟了多个用户线程.因此当uthread陷入内核时,用户空间其他模拟线程也不会被调度执行.
+
+### uthread可以利用多核CPU并发执行么?
+答: 不能,因为uthread是在一个核上模拟了用户空间多线程,自始至终仅有一个核在运行.这些用户空间线程不会被同时调度到不同的核上运行.
+
+---
