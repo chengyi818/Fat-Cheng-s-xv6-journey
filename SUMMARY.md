@@ -81,4 +81,6 @@
   * [Lab 4](di-shi-tian/lab-4.md)
 * 第十一天
   * [课前准备](ke-qian-zhun-bei.md)
+  * [第十一课](di-shi-yi-ke.md)
+  * 课后作业
 
