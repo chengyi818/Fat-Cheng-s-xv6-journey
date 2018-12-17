@@ -93,7 +93,15 @@
 2. 睡眠过程中,进程中止
 
 ## sleep/wakeup示例: iderw()/ideintr()
+我们以ide硬盘读取为例:
+1. 首先`iderw()`将块b读取请求放入请求队列,然后`sleep`在块b上.
+2. 块b是一个缓冲区,从ide硬盘读入的内容,将会被存放在此.
+3. 执行`iderw()`的线程将会进入睡眠,等待硬盘读取操作完成.当读取完成后,块b的B_VALID标志位将被置位.
+4. 当ide读取完成后,硬件将会发出中断,进入ide中断处理,执行`ideintr()`
+5. `ideintr()`主要进行: 将块b标识为B_VALID,然后唤醒所有等待块b的进程.
 
+## 思考点
+`iderw()`在睡眠时,将会持有`idelock`.同时`ideintr()`也需要持有`idelock`,那么为什么`iderw()`不在调用`sleep()`前,就释放`idelock`呢?
 
 
 
