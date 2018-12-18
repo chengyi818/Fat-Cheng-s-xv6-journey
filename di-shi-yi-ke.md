@@ -105,7 +105,39 @@
 答: 这里主要是为了针对`wakeup`丢失的问题.假设这样一个场景: 线程A执行`iderw()`发起了一次ide请求,然后释放了`idelock`.此时线程A正准备执行`sleep`,如果此时ide请求已经完成,那么中断处理程序就会执行`ideintr()`,尝试唤醒线程A.刚被唤醒的线程A立刻就会执行`sleep()`,而到了这会就没有中断回来唤醒线程A,这样线程A在没有`sleep`时,就收到了`wakeup`.在真正睡眠后,就无法再被调度执行.
 
 ## 如何解决wakeup丢失的问题?
+### 目标
+1. 在condition检查和线程状态为`SLEEPING`前,锁定`wakeup()`,不允许调用.
+2. 在线程睡眠期间,释放condition lock.
 
+### xv6的策略
+1. 使用`wakeup`前,要求同时获取condition lock和ptable lock.
+2. 睡眠线程在彻底睡眠前,至少持有condition lock或ptable lock中的一种.
+
+### 示例
+1. 在`ideintr()`中,使用wakeup时,就是同时在获取ide.lock和ptable.lock
+2. 在`iderw()`中,调用sleep()时,至少持有一个锁.
+
+### 图示
+```
+    |----idelock----|
+                  |---ptable.lock---|
+                                     |----idelock----|
+                                      |-ptable.lock-|
+```
+
+## 常见序列协调原语
+1. 条件变量
+2. 信号量
+
+## 另一个示例
+1. 另一个非常类似的示例是`pipe.c, piperead()/pipewrite()`.
+2. `piperead()`始终在等待读取buffer中的数据,当读完时,会唤醒写线程.
+3. `pipe`同样可能存在wakeup丢失的问题
+4. 睡眠线程可能被异常唤醒,在被唤醒后,需要再次检查睡眠条件
+
+----
+
+# 停止一个睡眠线程
 
 
 
