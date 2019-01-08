@@ -79,6 +79,7 @@
   * [第十课](di-shi-tian/di-shi-ke.md)
   * [课后作业](di-shi-tian/ke-hou-zuo-ye.md)
   * [Lab 4](di-shi-tian/lab-4.md)
+    * [Part A](di-shi-tian/lab-4/part-a.md)
 * 第十一天
   * [课前准备](ke-qian-zhun-bei.md)
   * [第十一课](di-shi-yi-ke.md)
