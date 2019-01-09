@@ -42,7 +42,7 @@ Kernel code implementing spin locks
 Code skeleton of the scheduler that you are about to implement
 
 ### 时间安排
-Lab4共分为3个Part,每个Part一周.
+Lab4共分为3个Part,每个Part大约在一周时间内完成.
 
 
 
