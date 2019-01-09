@@ -20,3 +20,6 @@
 CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内存会和IO设备的寄存器直接相连,因此用于访问内存的load/store指令同样可以用于访问设备寄存器.我们在前面的章节中,已经看到过MMIO的应用,比如物理地址`0xA0000`就是用于VGA显示.
 
 在一个4GB物理内存的系统上,LAPIC映射的物理内存地址为`0xFE000000`,即4GB地址以下32MB的空间.很明显,我们无法使用从`KERNBASE`开始的直接映射来访问这么高的物理地址.JOS虚拟内存映射从MMIOBASE开始映射了一块4MB的虚拟内存空间,用于映射IO设备.后面我们会介绍更多关于MMIO的内容,现在我们的目标是写一个简单的函数来分配该区域的物理内存,并将设备内存映射到这里.
+
+### Exercise 1
+完成`kern/pmap.c`中的`mmio_map_region()`函数.我们可以在`kern/lapic.c`中的`lapic_init()`函数中,看到`mmio_map_region()`是如何被使用的.目前我们还不能单独测试`mmio_map_region()`,我们需要接着完成下一个Exercise.
