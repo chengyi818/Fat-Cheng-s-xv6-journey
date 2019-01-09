@@ -23,3 +23,5 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 
 ### Exercise 1
 完成`kern/pmap.c`中的`mmio_map_region()`函数.我们可以在`kern/lapic.c`中的`lapic_init()`函数中,看到`mmio_map_region()`是如何被使用的.目前我们还不能单独测试`mmio_map_region()`,我们需要接着完成下一个Exercise.
+
+---
