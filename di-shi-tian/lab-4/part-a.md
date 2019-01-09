@@ -34,3 +34,60 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 此后,`boot_aps()`函数将通过发送STARTUP IPIs和初始的CS:IP到相应AP的LAPIC单元,一个接一个的激活AP.AP应该在CS:IP指定的地址开始运行其入口代码(在JOS中是MPENTRY_PADDR 0x7000).AP的入口代码`kern/mpentry.S`和`boot/boot.S`非常相似.经过短暂的设置后,AP将开启保护模式并启用分页.然后将调用C程序`kern/init.c`中的`mp_main()`函数.`boot_aps()`等待AP在其对应的CpuInfo中将`cpu_status`置为CPU_STARTED标志,然后再唤醒下一个CPU.
 
 
+### Exercise 2
+Read boot_aps() and mp_main() in kern/init.c, and the assembly code in kern/mpentry.S. Make sure you understand the control flow transfer during the bootstrap of APs. Then modify your implementation of page_init() in kern/pmap.c to avoid adding the page at MPENTRY_PADDR to the free list, so that we can safely copy and run AP bootstrap code at that physical address. Your code should pass the updated check_page_free_list() test (but might fail the updated check_kern_pgdir() test, which we will fix soon).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----
