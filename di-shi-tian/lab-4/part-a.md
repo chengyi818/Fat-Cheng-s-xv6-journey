@@ -41,6 +41,11 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 修改完成后,代码应当可以通过`check_page_free_list()`的检查.(可能无法通过`check_kern_pgdir()`的检查,稍后我们会修复这个问题.)
 
 ### Q&A
+对比`kern/mpentry.S`和`boot/boot.S`,`mpentry.S`被编译和链接到`KERNBASE`之上运行,宏`MPBOOTPHYS`的作用是什么?为什么`kern/mpentry.S`需要,而`boot/boot.S`不需要?换言之,如果`mpentry.S`去掉宏`MPBOOTPHYS`会发生什么错误?
+
+提示:
+回想一下我们在Lab 1中讨论过的关于链接地址和加载地址的区别.
+
 
 
 ---
