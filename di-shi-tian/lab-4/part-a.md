@@ -26,4 +26,5 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 
 ---
 
-## 应用处理器APs启动
+## 启动应用处理器APs
+在启动APs之前,BSP首先需要搜集当前这个多处理器系统的信息,比如CPU的总数,APIC标识符,LAPIC单元的MMIO地址.`kern/mpconfig.c`中的`mp_init()`函数通过读取BIOS内存区域中的MP配置表来获取这些信息.
