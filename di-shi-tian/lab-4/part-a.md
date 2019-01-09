@@ -45,6 +45,7 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 
 提示:
 回想一下我们在Lab 1中讨论过的关于链接地址和加载地址的区别.
+[stack overflow](https://stackoverflow.com/questions/33859072/what-does-pc-have-to-do-with-load-or-link-address)
 
 答:
 在链接过程中,linker会将汇编代码中的变量地址替换为链接地址.对于`boot/boot.S`而言,其加载首地址为0,因此并不受影响.
