@@ -31,6 +31,6 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 
 `kern/init.c`中的函数`boot_aps()`负责完成APs的启动过程.APs会以实模式启动,非常类似于BSP执行`boot/boot.S`的过程,所以`boot_aps()`首先将APs的启动代码拷贝到实模式下的地址.和bootloader启动不同的是,我们可以控制APs开始执行代码的位置.JOS将入口代码拷贝到`0x7000`(MPENTRY_CODE)开始的物理地址,但是低于640KB,任何未使用的,页对齐的物理地址其实都可以.
 
-此后,`boot_aps()`函数将通过发送STARTUP IPIs和初始的CS:IP到相应AP的LAPIC单元,一个接一个的激活AP.AP应该在CS:IP指定的地址开始运行其入口代码(在JOS中是MPENTRY_PADDR 0x7000).AP的入口代码`kern/mpentry.S`和`boot/boot.S`非常相似.经过短暂的设置后,AP将开启保护模式并启用分页.然后将调用C程序`kern/init.c`中的`mp_main()`函数.`boot_aps()`等待AP在其对应的CpuInfo中将cpu_status置为CPU_STARTED标志,然后再唤醒下一个CPU.
+此后,`boot_aps()`函数将通过发送STARTUP IPIs和初始的CS:IP到相应AP的LAPIC单元,一个接一个的激活AP.AP应该在CS:IP指定的地址开始运行其入口代码(在JOS中是MPENTRY_PADDR 0x7000).AP的入口代码`kern/mpentry.S`和`boot/boot.S`非常相似.经过短暂的设置后,AP将开启保护模式并启用分页.然后将调用C程序`kern/init.c`中的`mp_main()`函数.`boot_aps()`等待AP在其对应的CpuInfo中将`cpu_status`置为CPU_STARTED标志,然后再唤醒下一个CPU.
 
 
