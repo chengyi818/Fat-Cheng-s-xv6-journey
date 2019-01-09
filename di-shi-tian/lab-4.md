@@ -41,6 +41,8 @@ Kernel code implementing spin locks
 7. kern/sched.c	
 Code skeleton of the scheduler that you are about to implement
 
+### 时间安排
+Lab4共分为3个Part,每个Part一周.
 
 
 
