@@ -46,6 +46,8 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 提示:
 回想一下我们在Lab 1中讨论过的关于链接地址和加载地址的区别.
 
+答:
+
 
 
 ---
