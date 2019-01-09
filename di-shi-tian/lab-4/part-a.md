@@ -29,4 +29,5 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 ## 启动应用处理器APs
 在启动APs之前,BSP首先需要搜集当前这个多处理器系统的信息,比如CPU的总数,APIC标识符,LAPIC单元的MMIO地址.`kern/mpconfig.c`中的`mp_init()`函数通过读取BIOS内存区域中的MP配置表来获取这些信息.
 
-`kern/init.c`中的函数`boot_aps()`负责完成APs的启动过程.APs会以实模式启动,非常类似于BSP执行`boot/boot.S`的过程,所以`boot_aps()`首先将APs的启动代码拷贝到实模式下的地址.和bootloader启动不同的是,我们可以控制APs开始执行代码的位置.
+`kern/init.c`中的函数`boot_aps()`负责完成APs的启动过程.APs会以实模式启动,非常类似于BSP执行`boot/boot.S`的过程,所以`boot_aps()`首先将APs的启动代码拷贝到实模式下的地址.和bootloader启动不同的是,我们可以控制APs开始执行代码的位置.JOS将入口代码拷贝到`0x7000`(MPENTRY_CODE)开始的物理地址,但是低于640KB,任何未使用的,页对齐的物理地址其实都可以.
+
