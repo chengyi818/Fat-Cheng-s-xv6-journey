@@ -54,9 +54,10 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 `kern/mpentry.S`,链接地址为0,加载地址为`MPENTRY_CODE`,而其中的变量地址并没有被重定位.此时如果使用linker填充的地址将无法正常访问到变量.必须通过宏`MPBOOTPHYS`来进行重定位转换.
 
 
-
 ---
 
+## 各CPU状态和初始化
+ 
 
 
 
