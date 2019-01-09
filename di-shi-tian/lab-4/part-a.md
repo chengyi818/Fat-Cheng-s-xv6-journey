@@ -40,6 +40,13 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 
 修改完成后,代码应当可以通过`check_page_free_list()`的检查.(可能无法通过`check_kern_pgdir()`的检查,稍后我们会修复这个问题.)
 
+### Q&A
+
+
+---
+
+
+
 
 
 
