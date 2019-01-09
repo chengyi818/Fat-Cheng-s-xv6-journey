@@ -48,7 +48,7 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 [stack overflow](https://stackoverflow.com/questions/33859072/what-does-pc-have-to-do-with-load-or-link-address)
 
 答:
-在链接过程中,linker会将汇编代码中的变量地址替换为链接地址.
+加载地址是实际存储指令的位置,而链接地址是链接器为指令中变量生成地址的基地址.
 
 对于`boot/boot.S`而言,链接地址为0,加载地址也为0,因此并不受影响.
 `kern/mpentry.S`,链接地址为0,加载地址为`MPENTRY_CODE`,而其中的变量地址并没有被重定位.此时如果使用linker填充的地址将无法正常访问到变量.必须通过宏`MPBOOTPHYS`来进行重定位转换.
