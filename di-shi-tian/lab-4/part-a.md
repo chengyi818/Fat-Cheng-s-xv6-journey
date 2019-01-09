@@ -58,6 +58,17 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 
 ## 各CPU状态和初始化
  
+编写多处理器操作系统时,区分每个处理器独有的局部状态和整个系统共享的全局状态非常重要.`kern/cpu.h`定义了大部分CPU独有的状态结构,其中包括记录了全部CPU独有状态的`struct CpuInfo`.函数`cpunum()`总是会返回调用它的CPU的ID,这个ID可以用作数组cpus的索引.使用宏`thiscpu`可以快速获取当前CPU对应的`struct CpuInfo`.
+
+如下CPU独有的状态是我们需要关注的:
+* 每个CPU的内核栈
+因为多个CPU可以同时陷入内核,因此我们需要为每个CPU开辟出独立的内核栈,以防止他们互相干扰.数组`percpu_kstacks[NCPU][KSTKSIZE]`保存了所有CPU使用的内核栈.
+
+在Lab2中,我们将`bootstack`所指向的物理内存映射到`KSTACKTOP`下方,作为BSP的内核栈.在本实验中,我们将每个CPU的内核栈映射到该区域,并使用保护页将他们分开.CPU 0对应的内核栈仍从`KSTACKTOP`向下生长.CPU1的内核栈从CPU0的内核栈底`KSTKGAP`以下开始,以此类推.具体细节可以参照`inc/memlayout.h`.
+
+* 每个CPU的TSS和TSS descriptor
+
+
 
 
 
