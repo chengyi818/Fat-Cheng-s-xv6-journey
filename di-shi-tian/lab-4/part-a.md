@@ -35,8 +35,10 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 
 
 ### Exercise 2
-Read boot_aps() and mp_main() in kern/init.c, and the assembly code in kern/mpentry.S. Make sure you understand the control flow transfer during the bootstrap of APs. Then modify your implementation of page_init() in kern/pmap.c to avoid adding the page at MPENTRY_PADDR to the free list, so that we can safely copy and run AP bootstrap code at that physical address. Your code should pass the updated check_page_free_list() test (but might fail the updated check_kern_pgdir() test, which we will fix soon).
 
+阅读`kern/init.c`中的`boot_aps()`和`mp_main()`函数,以及`kern/mpentry.S`.确保理解了APs的启动流程.然后修改`kern/pmap.c`中`page_init()`的实现,以避免将`MPENTRY_PADDR`所在的物理页放入`page_free_list`,这样我们才能安全地拷贝和运行AP的启动代码.
+
+修改完成后,代码应当可以通过`check_page_free_list()`的检查.(可能无法通过`check_kern_pgdir()`的检查,稍后我们会修复这个问题.)
 
 
 
