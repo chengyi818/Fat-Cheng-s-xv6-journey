@@ -57,7 +57,7 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 ---
 
 ## 各CPU状态和初始化
- 
+
 编写多处理器操作系统时,区分每个处理器独有的局部状态和整个系统共享的全局状态非常重要.`kern/cpu.h`定义了大部分CPU独有的状态结构,其中包括记录了全部CPU独有状态的`struct CpuInfo`.函数`cpunum()`总是会返回调用它的CPU的ID,这个ID可以用作数组cpus的索引.使用宏`thiscpu`可以快速获取当前CPU对应的`struct CpuInfo`.
 
 如下CPU独有的状态是我们需要关注的:
@@ -68,6 +68,10 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 
 * 每个CPU的TSS和TSS descriptor
 每个CPU的`task state segment,TSS`用于指定每个CPU的内核栈所在位置.CPU i的TSS保存在`cpus[i].cpu_ts`,相应地TSS descriptor定义在GDT entry`gdt[(GD_TSS0 >> 3) + i]`.`kern/trap.c`中定义的全局ts则没用了.
+
+* 每个CPU当前运行的进程指针
+因为每个CPU都可以同时运行不同的用户进程,因此我们不能再使用一个全局变量`curenv`来指向
+
 
 
 
