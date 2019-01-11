@@ -13,3 +13,6 @@ xv6源自贝尔实验室的Unix V6,主要将硬件平台迁移到x86上.在通�
 包含了xv6, jos以及涉及到的资源
 
 [在线阅读地址](https://chengyi818.gitbooks.io/fat-cheng-s-xv6-journey/content/)
+
+## TODO
+1. 所有的Challenge练习全部跳过

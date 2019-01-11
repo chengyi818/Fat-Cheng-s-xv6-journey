@@ -62,21 +62,87 @@ CPU使用内存映射IO(memory-mapped I/O,MMIO)访问LAPIC.在MMIO中,物理内�
 
 如下CPU独有的状态是我们需要关注的:
 * 每个CPU的内核栈
+
 因为多个CPU可以同时陷入内核,因此我们需要为每个CPU开辟出独立的内核栈,以防止他们互相干扰.数组`percpu_kstacks[NCPU][KSTKSIZE]`保存了所有CPU使用的内核栈.
 
 在Lab2中,我们将`bootstack`所指向的物理内存映射到`KSTACKTOP`下方,作为BSP的内核栈.在本实验中,我们将每个CPU的内核栈映射到该区域,并使用保护页将他们分开.CPU 0对应的内核栈仍从`KSTACKTOP`向下生长.CPU1的内核栈从CPU0的内核栈底`KSTKGAP`以下开始,以此类推.具体细节可以参照`inc/memlayout.h`.
 
 * 每个CPU的TSS和TSS descriptor
+
 每个CPU的`task state segment,TSS`用于指定每个CPU的内核栈所在位置.CPU i的TSS保存在`cpus[i].cpu_ts`,相应地TSS descriptor定义在GDT entry`gdt[(GD_TSS0 >> 3) + i]`.`kern/trap.c`中定义的全局ts则没用了.
 
 * 每个CPU当前运行的进程指针
-因为每个CPU都可以同时运行不同的用户进程,因此我们不能再使用一个全局变量`curenv`来指向
+
+因为每个CPU都可以同时运行不同的用户进程,因此我们不能再使用一个全局变量`curenv`来指向所有CPU当前运行的进程.我们将每个CPU当前运行的进程指针保存在`cpus[cpunum()].cpu_env`,或者是`thiscpu->cpu_env`.
+
+* 每个CPU的寄存器组
+
+所有的寄存器对于每个CPU而言,都是独有的.因此一些寄存器初始化指令,比如`lcr3(), ltr(), lgdt(), lidt()`在每个CPU上都要执行.`env_init_percpu()`和`trap_init_percpu()`即被用作在每个CPU上执行初始化动作.
+
+除此之外,如果我们在挑战早期的实验中,设置了CPU的状态位或者其他CPU初始化操作,那么必须在每个CPU上复制这些操作.
+
+### Exercise 3
+修改`kern/pmap.c`中的`mem_init_mp()`,从`KSTACKTOP`开始映射每个CPU的内核栈,图示位于`inc/memlayout.h`.每个内核栈的大小是`KSTKSIZE`字节外加保护页`KSTKGAP`字节.完成后,代码应该可以通过`check_kern_pgdir()`检查.
+
+### Exercise 4
+`kern/trap.c`中的`trap_init_percpu()`初始化了BSP的TSS和TSS descriptor.在Lab3中这样做是正确的,但是在SMP中这样就不行了.修改这个函数,为每个CPU设置TSS和TSS descriptor.修改完成后,全局变量ts应该不再需要了.
+
+### 测试
+在完成以上两个Exercise后,通过QEMU使用4核同时运行JOS,我们应该可以看到如下打印:
+```
+$make qemu CPUS=4
+...
+Physical memory: 66556K available, base = 640K, extended = 65532K
+check_page_alloc() succeeded!
+check_page() succeeded!
+check_kern_pgdir() succeeded!
+check_page_installed_pgdir() succeeded!
+SMP: CPU 0 found 4 CPU(s)
+enabled interrupts: 1 2
+SMP: CPU 1 starting
+SMP: CPU 2 starting
+SMP: CPU 3 starting
+```
+
+---
+
+## 大内核锁
+
+各AP在完成`mp_main()`都处于死循环中.在AP真正运行之前,我们必须首先解决SMP同时运行内核代码的条件竞争问题.其中最简单的一种办法是使用**大内核锁**.大内核锁是一个全局唯一的锁,每当有进程陷入内核,则持有该锁.当进程返回用户空间时,释放该锁.通过这种方式,我们可以解决多个CPU在运行内核代码时的竞争问题.与之相对的弊端则是,当有多个CPU同时尝试进入内核时,只有一个CPU可以进入,其他CPU不得不循环等待.
+
+`kern/spinlock.h`声明了大内核锁`kernel_lock`,同时提供了`lock_kernel()`和`unlock_kernel()`两个函数.我们需要在如下4种位置使用大内核锁:
+1. `i386_init()`: 在BSP唤醒其他AP前,获取大内核锁.
+2. `mp_main()`: AP初始化之后,获取大内核锁.然后调用`sched_yield()`来调度合适的进程运行在本CPU上.
+3. `trap()`: 从用户空间陷入内核后,尝试获取大内核锁.我们可以通过检查`tf_cs`的低位来判断`trap`来自用户态还是内核态.
+4. `env_run()`: 在切换到用户态之前,释放大内核锁.过早或者过晚释放大内核锁都会导致竞争或者死锁.
+
+### Exercise 5
+
+根据上面描述的位置,使用大内核锁,从而避免SMP的竞争问题.
+
+### 测试
+目前我们还不能单独测试,在完成进程调度后,我们会测试这些代码.
+
+### Q&&A
+Q: 通过大内核锁,我们可以保证同一时间只有一个CPU运行内核代码,那么为什么还要给每个CPU单独开辟内核栈?为什么不能共用一个呢?能不能想出一个场景,即使有大内核锁的保护,但如果没有独立的内核栈,还是会出错?
+
+A: 如果CPU a从用户态陷入内核,正在使用唯一的内核栈.此时如果有中断需要处理,我们可以看到大内核锁并没有保护中断处理.因此还是可能出现两个CPU同时在运行内核代码的情况.
 
 
+---
 
+## 循环调度
 
+我们的下一个练习是修改JOS内核,以便在多个CPU间调度进程.调度流程如下:
 
+`kern/sched.c`中的`sched_yield()`负责选出合适的进程来运行.它将会遍历整个`envs[]`数组查找进程状态为`ENV_RUNNABLE`的进程.如果存在上一个运行的进程则从上一个进程向后查找,如果没有则从数组头部开始.找到之后,调用`env_run()`来执行那个进程.
 
+`sched_yield()`必须避免在两个CPU上运行同一个进程.它可以通过判断进程状态来判断进程是否正在运行.只有避免竞争问题,我们就可以避免同时调度同一进程到两个不同的CPU上.
+
+`sys_yield()`是新实现的一个系统调用.用户进程通过调用这个函数,可以调用到内核的`sched_yield()`,从而让出CPU.
+
+### Exercise 6
+完成上面描述的`sched_yield()`,不要忘了修改`syscall()`来调度`sys_yield()`.
 
 
 
