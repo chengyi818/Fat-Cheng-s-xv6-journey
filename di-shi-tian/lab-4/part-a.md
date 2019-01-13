@@ -137,14 +137,44 @@ A: 如果CPU a从用户态陷入内核,正在使用唯一的内核栈.此时如�
 
 `kern/sched.c`中的`sched_yield()`负责选出合适的进程来运行.它将会遍历整个`envs[]`数组查找进程状态为`ENV_RUNNABLE`的进程.如果存在上一个运行的进程则从上一个进程向后查找,如果没有则从数组头部开始.找到之后,调用`env_run()`来执行那个进程.
 
-`sched_yield()`必须避免在两个CPU上运行同一个进程.它可以通过判断进程状态来判断进程是否正在运行.只有避免竞争问题,我们就可以避免同时调度同一进程到两个不同的CPU上.
+`sched_yield()`必须避免在两个CPU上运行同一个进程.它可以通过判断进程状态来判断进程是否正在运行.只要避免竞争问题,我们就可以避免同时调度同一进程到两个不同的CPU上.
 
 `sys_yield()`是新实现的一个系统调用.用户进程通过调用这个函数,可以调用到内核的`sched_yield()`,从而让出CPU.
 
 ### Exercise 6
-完成上面描述的`sched_yield()`,不要忘了修改`syscall()`来调度`sys_yield()`.
+1. 完成上面描述的`sched_yield()`
+2. 不要忘了修改`syscall()`来调度`sys_yield()`.
+3. 确保在`mp_main()`中正确调用了`sched_yield()`.
+4. 修改`kern/init.c`来创建多个进程同时运行`user/yield.c`
+5. 运行`make qemu`,进程应该在彼此之间来回多次切换.
+```
+...
+Hello, I am environment 00001000.
+Hello, I am environment 00001001.
+Hello, I am environment 00001002.
+Back in environment 00001000, iteration 0.
+Back in environment 00001001, iteration 0.
+Back in environment 00001002, iteration 0.
+Back in environment 00001000, iteration 1.
+Back in environment 00001001, iteration 1.
+Back in environment 00001002, iteration 1.
+...
+```
+6. 运行`make qemu CPUS=2`
+7. 当`yield`程序退出后,系统没有了可执行的进程.调度器会调用JOS的kernel monitor.如果不是这样,请修改代码.
+
+### Todo
+1. 看起来user_yield执行有点小坑,好像需要注释掉`syscall.c`中的`sys_cputs()`中的`user_mem_assert()`
+
+### Q&&A
+Q: 在我们`env_run()`中应该调用了`lcr3()`.在调用`lcr3()`前后,我们引用了变量e的内容(env_run的参数).一旦调用了`lcr3()`之后,MMU使用的寻址页表立刻变化了.但是虚拟地址e所对应的物理地址没有发生变化.这是为什么呢?即为什么可以在`lcr3()`前后都引用变量e?
+
+A: 首先明确虚拟地址e存在于内核空间,因此内核页表存在其映射关系.其次,在创建新进程时,会拷贝内核页表到新进程的页表.因此MMU采用新进程页表进行地址转换同样可以覆盖全部内核空间.相关代码路径`env_create()-->env_alloc()-->env_setup_vm()`
 
 
+Q: 不管任何时候,当内核从进程a切换到进程b.它必须确保进程a的所有寄存器被正确保存,以便一会可以继续切换到进程b运行.请问内核是如何保存的?
+
+A: 在进程a陷入内核时,用户态所有寄存器被保存到了TrameFrame中
 
 
 
