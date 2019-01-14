@@ -163,9 +163,6 @@ Back in environment 00001002, iteration 1.
 6. 运行`make qemu CPUS=2`
 7. 当`yield`程序退出后,系统没有了可执行的进程.调度器会调用JOS的kernel monitor.如果不是这样,请修改代码.
 
-### Todo
-1. 看起来user_yield执行有点小坑,好像需要注释掉`syscall.c`中的`sys_cputs()`中的`user_mem_assert()`
-
 ### Q&&A
 Q: 在我们`env_run()`中应该调用了`lcr3()`.在调用`lcr3()`前后,我们引用了变量e的内容(env_run的参数).一旦调用了`lcr3()`之后,MMU使用的寻址页表立刻变化了.但是虚拟地址e所对应的物理地址没有发生变化.这是为什么呢?即为什么可以在`lcr3()`前后都引用变量e?
 
