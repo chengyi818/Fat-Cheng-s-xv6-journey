@@ -14,6 +14,11 @@ GDB
 1. 执行make qemu-gdb
 2. 执行gdb
 
+
 ## JOS GDB调试方法
+###
 1. 执行make qemu-gdb
 2. 执行make gdb
+
+### 执行用户程序faultread
+1. make run-faultread
