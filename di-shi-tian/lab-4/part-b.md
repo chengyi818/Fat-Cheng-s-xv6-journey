@@ -34,7 +34,7 @@ JOS的用户异常栈同样是一个页的大小,栈顶位于`UXSTACKTOP`,所以
 用户进程要想支持用户态的page fault handler,需要为每个进程分配异常栈.我们可以通过part A介绍的`sys_page_alloc()`函数来分配.
 
 ## 调用用户态page fault handler
-为了从用户态处理page fault,我们需要修改`kern/trap.c`中的page fault handler.我们将page fault时的用户状态称为**trap-time**.
+为了从用户态处理page fault,我们需要修改`kern/trap.c`中的page fault handler.我们将触发page fault时的用户状态称为**trap-time state**.
 
 如果没有page fault handler注册,JOS内核会销毁进程.否则,内核会在异常栈上准备好一个`trap frame`,具体定义可以参考`int/trap.h`中的`struct Trapframe`.
 ```
