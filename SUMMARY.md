@@ -80,8 +80,8 @@
   * [课后作业](di-shi-tian/ke-hou-zuo-ye.md)
   * [Lab 4](di-shi-tian/lab-4.md)
     * [Part A](di-shi-tian/lab-4/part-a.md)
+    * [Part B](di-shi-tian/lab-4/part-b.md)
 * 第十一天
   * [课前准备](ke-qian-zhun-bei.md)
   * [第十一课](di-shi-yi-ke.md)
   * [课后作业](ke-hou-zuo-ye.md)
-
