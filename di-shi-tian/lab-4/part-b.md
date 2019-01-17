@@ -134,7 +134,34 @@ this string was faulted in at cafebffe
 
 每次当进程尝试往COW的页面写入内容时,会发生page fault.这时会跳转到用户空间的page fault handler,流程如下:
 
-1.
+1. 内核调用`_pgfault_upcall`来处理page fault,即调用了`fork()`中的`pgfault()`.
+2. `pgfault()`首先通过检查`FEC_WR`标志来判断page fault是否由写操作引发,接着检查目标页面是否是否具有标志位`PTE_COW`.如果以上检查没有通过,则会`panic()`.
+3. `pgfault()`在临时位置分配一个新页面,并将COW页面的内容拷贝到新页面.接着将新页面代替COW页面,并将权限改为可读可写.
+
+在实现`lib/fork.c`的过程中,我们需要查询内存页面的标志位,比如PTE_COW等.我们可以通过[UVPT](https://pdos.csail.mit.edu/6.828/2017/labs/lab4/uvpt.html)的方式来读取进程的页面信息.`lib/entry.S`设置了uvpt和uvpd,这样我们可以在`lib/fork.c`中,轻松获取页面信息了.
+
+### Exercise12
+实现`lib/fork.c`中的`fork()`,`duppage()`和`pgfault()`.
+
+### 测试
+通过`forktree`来测试代码,打印内容中包含`new env`,`free env`以及`exiting gracefully`等内容.打印信息类似于一下内容:
+```
+	1000: I am ''
+	1001: I am '0'
+	2000: I am '00'
+	2001: I am '000'
+	1002: I am '1'
+	3000: I am '11'
+	3001: I am '10'
+	4000: I am '100'
+	1003: I am '01'
+	5000: I am '010'
+	4001: I am '011'
+	2002: I am '110'
+	1004: I am '001'
+	1005: I am '111'
+	1006: I am '101'
+```
 
 
 ---
