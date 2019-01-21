@@ -11,10 +11,9 @@
 5. 汇编语言--王爽著
 
 # github参考repo
-1. [william-cheung](https://github.com/william-cheung/mit-6.828-2014)
-2. [SimpCosm](https://github.com/SimpCosm/6.828)
-3. [saffahyjp](https://github.com/saffahyjp/6.828)
-4. [kelwin](https://github.com/kelwin/6.828)
+1. [shishujuan/mit6.828-2017](https://github.com/shishujuan/mit6.828-2017/)
+2. [william-cheung 2014](https://github.com/william-cheung/mit-6.828-2014)
+j
 
 # 前置知识
 1. C语言基础
