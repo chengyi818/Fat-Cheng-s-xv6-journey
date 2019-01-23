@@ -68,49 +68,11 @@ JOS中进程间通信的消息由两部组成: 一个32bit的int和一个可选�
 
 ### Exercise15
 1. 在`kern/syscall.c`中,实现`sys_ipc_recv`和`sys_ipc_try_send`.
-2. 在实现前,请注意阅读两者的注释.在使用`envid2env`,注意将`checkperm`设为0,表示不需要权限检查,即任何进程都可以发消息到其他进程,内核仅会对envid做有效性检查.
-3. 在`lib/ipc.c`中,实现`ipc_recv`和`ipc_send`.
+2. 在实现前,请注意阅读两者的注释.
+3. 在使用`envid2env`,注意将`checkperm`设为0,表示不需要权限检查,即任何进程都可以发消息到其他进程,内核仅会对envid做有效性检查.
+4. 在`lib/ipc.c`中,实现`ipc_recv`和`ipc_send`.
 
 ### 测试APK
 1. 运行`user/pingpong`
 2. 运行`user/primes`.
-3. 请阅读两者的实现,并了解其运行原理
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
----
+3. 请重点阅读`user/primes`,理解其实现原理.
