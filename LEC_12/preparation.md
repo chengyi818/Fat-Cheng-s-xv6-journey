@@ -9,9 +9,15 @@
 1. 持久化 persistence
 2. 崩溃恢复 crash recovery
 3. 事务处理 transaction
-4. vfs模型: inode
+4. vfs模型 inode
 
 ---
 
-1. buffer cache layer: bio.c
-2.
+1.  bio.c
+buffer cache layer
+
+2. fs.c
+
+3. sysfile.c
+
+4. file.c
