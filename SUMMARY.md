@@ -89,3 +89,7 @@
   * [课前准备](LEC_12/preparation.md)
   * [第十二课](LEC_12/LEC_12.md)
   * [课后作业](LEC_12/homework.md)
+* [第十三天](LEC_13/README.md)
+  * [课前准备](LEC_13/preparation.md)
+  * [第十三课](LEC_13/LEC_13.md)
+  * [课后作业](LEC_13/homework.md)
