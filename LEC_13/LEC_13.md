@@ -40,3 +40,212 @@
 ---
 
 ## 解决方案: 日志
+
+### 最主流的解决方案: 日志
+1. 主要目标可以将文件系统读写操作原子化,以解决crash的问题.
+2. 次要目标是crash后恢复时间尽可能的短,不要像fsck那样重新扫描整理整个磁盘.
+
+### 分步介绍日志
+1. 首先介绍地是xv6的日志系统,仅提供了日志功能和快恢复,代价是正常的读写操作会变慢.
+2. 其次将介绍Linux中的EXT3文件系统,提升了正常读写的速度.
+
+### 日志背后的基本思想
+1. 我们的目标是文件系统操作的原子性: 要么是所有操作全部完成,要么是一个都不完成.
+2. 我们可以将一次原子的文件系统操作称为一个事务.
+3. 首先,我们在磁盘上的log区将一次文件系统操作相关的所有操作记录起来.
+4. 然后在磁盘上记录`done`,表示本次文件操作已`commit`.
+5. 然后将数据从log区写入到真正的数据区,真被称为`install`.
+6. 如果在`done`之前发生crash,则忽略log区的内容.
+7. 如果在`done`之后发生crash,则重新将log区的内容写入到真正的数据区.
+8. 这套思想被称为写前日志(WRITE-AHEAD LOG)
+
+### 写前日志规则
+1. 在所有操作全部写入到log区,并且log区标记为`commit`之前,绝不要将任何数据写入到真正的数据区.
+
+### 写前日志规则的必要性
+1. 根据操作的原子性要求,在一组文件系统操作中,如果我们将其中一个写入到数据区,则必须写入其他的操作.
+2. 而在写入的过程中,随时可能发生crash.因此我们必须保证在写入第一个操作时,其他操作必须在crash后可用.
+3. 因此,我们必须等到所有操作都写入到log区,才可以将操作写入到数据区.
+
+### 日志系统的神奇之处
+1. 通常复杂的数据结构的crash恢复都是比较困难的.日志系统简化了这一操作.
+2. 日志系统通常可以通过分层,扩展到现有的存储系统上.
+3. 日志系统经过优良的设计,可以拥有比较好的性能.
+
+### 挑战: 阻止从缓存写回
+1. 一个系统调用可以随意修改缓存的block,但在一次`commit`之前,block不能写回文件系统.
+2. 比较诡异的一点在于,缓存可能会满.那么我们就需要将一些缓存清理出去,以便容纳新的数据.
+3. 在这一过程中,如果我们不小心将`dirty`的block写回磁盘,那么就会造成错误.
+4. 解决方法之一: 确保buffer cache足够大.
+5. 解决方法之二: 在清理缓存和`commit`前,锁定`dirty`block.在之后再解锁.
+
+### xv6 log描述
+1. 在write阶段,首先将blockno保存到内存中的数组中`log.lh.block[]`.
+2. 同时将缓存中的block标记为dirty,防止意外写回到磁盘.
+3. 在commit阶段,首先这些block写入到磁盘的log区.并等待磁盘IO完成.
+4. 然后,将log header写入到磁盘,log header包含了block真正的目标blockno和总共需要写回的block数目.
+5. 在install阶段,我们需要将数据从log区写入到真正的数据区.
+6. 最后,我们需要将磁盘上的log header的n字段写为0.表示一次提交事务已经完成.
+
+### log header中n字段的含义
+1. n在log header中,就表示了`commit`的含义.
+2. n非零,表示当前正处于commit阶段,log区的内容是有效且是一个完整的事务提交.
+3. n为零,表示当前不是commit阶段,则log区的内容是无意义的,可以忽略.
+4. 由此可知,磁盘上log header的n字段就是事务提交的重要节点.
+
+### 挑战: 数据大小限制
+1. 根据前面的描述,我们可以知道log区的大小就是一次事务提交的上限.
+2. 因此对于特别大的写入,则不可避免的需要将数据分为若干个部分,那么这样的写入就不是原子的.
+
+### 挑战: 并发写入
+1. 文件系统支持多个系统调用同时写入数据,并将它们合并为一个提交.
+2. 如果某个系统调用还没有结束操作,则不能执行一次提交.
+
+### xv6的解决方案
+1. 若log区没有足够的空闲空间,则系统调用不能执行,直到当前调用完成并释放出足够的空间.
+2. 当正在执行的调用计数器(log.outstanding)为零,则执行事务提交,然后释放log空间,唤醒其他等待的调用.
+
+
+### 挑战: 同一事务中多次写同一block
+1. xv6中在同一次事务提交中,如果多次写同一block,这些操作会被合并.
+2. 在commit和install阶段,只会执行一次.
+3. 这样的合并有助于提升性能: write absorbtion
+
+
+### xv6 磁盘block使用情况
+1. 在我们完成LEC 12 homework后,新的使用情况如下:
+```
+   2: log head
+  32: inodes
+  58: bitmap
+  63: content blocks
+```
+
+### 栗子
+1. 修改`bwrite()`以打印buf对应的block number.
+2. 实际的磁盘写入发生在事务提交的时候.
+
+#### 代码和打印
+```
+  $ echo a > x
+  // create
+  bwrite 3   inode, 35
+  bwrite 4   directory content, 63
+  bwrite 2   commit (block #s and n)
+  bwrite 35  install inode
+  bwrite 63  install directory content
+  bwrite 2   mark log "empty"
+  // write
+  bwrite 3
+  bwrite 4
+  bwrite 5
+  bwrite 2
+  bwrite 58   bitmap
+  bwrite 533  a
+  bwrite 35   inode (file size)
+  bwrite 2
+  // write
+  bwrite 3
+  bwrite 4
+  bwrite 2
+  bwrite 533  \n
+  bwrite 35   inode
+  bwrite 2
+```
+
+#### 调用路径
+1. 我们来重点考察第二个`write`,也就是将`a`写入文件x的过程.
+2. 首先,我们会调用到`file.c`中的`filewrite()`.
+3. 其中将根据log区的大小决定一次事务提交写入的大小,目前xv6的一次写入大小为1536byte.
+4. 然后是一个组合操作:
+```
+    begin_op()
+      bmap() -- can write bitmap, indirect block
+      bread()
+      modify bp->data
+      log_write()
+      iupdate() -- writes inode
+    writei() -- fs.c
+    end_op()
+      commit()
+        write_log()
+        write_head()
+        install_trans()
+        write_head()
+
+```
+5. `begin_op()`主要有三个作用:
+  5.1 表示以下操作为一组原子操作
+  5.2 判断当前是否正在提交
+  5.3 判断log区的剩余空间是否能够容纳我们这次写入
+6. `log_write()`主要有两个作用:
+  6.1 将需要更新的block number记录到内存(log.lh.block)中
+  6.2 将这个block所在的buf设置为`dirty`,避免`bget()`再次使用.
+7. `end_op()`: 当没有其他系统调用在执行时,执行`commit()`
+8. `commit()`主要有四个作用:
+  8.1 将更新过的block写入到磁盘的log区
+  8.2 将内存中的log header写回到磁盘,并在磁盘标记本次`commit done`
+  8.3 `install`,将log区已经登记过的block拷贝到磁盘中block真正属于的位置.
+  8.4 `block`内容写回磁盘后,`ide.c`会清除block的`B_DIRTY`标志位
+  8.5 最后,清除磁盘上表示`commit done`的标志位,其实就是`log header`中的`n`字段.
+
+### 在提交过程中crash,会发生什么?
+1. 首先,内存中的信息会全部丢失,只有磁盘上的信息可以保存.
+2. 启动时,内核在使用文件系统前,会首先执行`recover_from_log()`.
+3. 如果`log header`标记为`done`,则会将log区的相应block拷贝到磁盘相应的位置.
+4. 显然,很可能我们会发生重复拷贝,但这不会引起什么问题.
+
+
+#### xv6 log的优点
+1. 基于写前日志,实现了正确性.
+2. 相对良好的磁盘性能: log整合了写入操作,但是数据block通常需要写入磁盘两次.
+3. 实现了对并发的支持.
+
+#### xv6 log的缺点
+1. 性能不高
+  1.1 每个block都需要写入磁盘两次
+  1.2 即使仅修改了block的一小部分内容,整个block都需要被重新写回
+  1.3 同步线性写回每个block,每个block都需要等待磁盘IO结束.
+  1.4 log写入和block写入都稍显急迫,完全可以先写回log,真实的block可以延迟写回,以提高性能.
+2. 对log区大小要求较高,比如`unlink`可能需要同时修改很多block,一旦超出log区限制,会比较尴尬
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
