@@ -93,3 +93,7 @@
   * [课前准备](LEC_13/preparation.md)
   * [第十三课](LEC_13/LEC_13.md)
   * [课后作业](LEC_13/homework.md)
+* [第十四天](LEC_14/README.md)
+  * [课前准备](LEC_14/preparation.md)
+  * [第十四课](LEC_14/LEC_14.md)
+  * [课后作业](LEC_14/homework.md)
