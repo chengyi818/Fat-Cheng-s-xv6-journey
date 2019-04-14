@@ -104,7 +104,7 @@ recover_from_log(void)
 因此在`install_trans()`中,我们无需从log区中,读取`block 33`的内容.
 
 ### 修改
-我们需要修改`log.c`,当`install_tran是()`是从`commit()`中调用过来时,我们不需要从log区中读取.
+我们需要修改`log.c`,当`install_trans()`是从`commit()`中调用过来时,我们不需要从log区中读取.
 
 ### 测试
 在xv6中创建一个文件,重启xv6,确认文件依然存在.
