@@ -136,12 +136,22 @@ JOS文件系统将支持处理3GB或更小的磁盘.文件系统进程地址空�
 ## The Block Bitmap
 `fs_init()`设置bitmap指针后,我们可以将bitmap视为一个bit位数组,每个bit代表磁盘上的一个block块.例如,请参见`block_is_free()`,它只是检查bitmap中给定的block块是否标记为`free`.
 
-### Exercise 3
+### Exercise3
 使用`free_block`作为在文件系统中实现`alloc_block()`函数的参考,它应该在bitmap中找到一个空闲的磁盘block块,将它标记为已使用,并返回该块的编号.分配block块时,应该立即用`flush_block()`将更改后的bitmap block块刷新回磁盘,以保持文件系统的一致性.
 
 使用make grade测试我们的代码.我们的代码现在应该通过"alloc_block".
 
 ## File Operations
+JOS已经提供了许多函数来实现文件系统所需的基本功能,这些函数包括解释和管理`struct File`,扫描和管理目录文件,以及从根目录开始遍历文件系统以解析绝对路径名.通读`fs/fs.c`中的所有代码,并确保在继续操作之前理解每个函数的功能.
+
+### Exercise4
+实现`file_block_walk()`和`file_get_block()`.`file_block_walk()`从文件中的block块偏移量映射到`struct File`或间接块中该块的指针,非常像`pgdir_walk()`对页表所做的操作.`file_get_block()`更进一步,映射到实际的磁盘块,必要时可以分配一个新的磁盘block块.
+
+使用`make grade`测试我们的代码.此时代码应该通过`file_open`, `file_get_block`, `file_flush/file_truncated/file rewrite`和`testfile`.
+
+### Tips
+`file_block_walk()`和`file_get_block()`是文件系统的基础工具.例如,`file_read()`和`file_write()`只不过是在操作连续缓冲区,而`file_get_block()`却需要处理分散的block块和顺序缓冲区之间的关系.
+
 ## The file system interface
 ---
 # Spawning Processes
