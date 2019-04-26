@@ -152,7 +152,50 @@ JOS已经提供了许多函数来实现文件系统所需的基本功能,这些�
 ### Tips
 `file_block_walk()`和`file_get_block()`是文件系统的基础工具.例如,`file_read()`和`file_write()`只不过是在操作连续缓冲区,而`file_get_block()`却需要处理分散的block块和顺序缓冲区之间的关系.
 
-## The file system interface
+## The file system interface 文件系统接口
+现在,JOS文件系统进程本身已经拥有了必要的函数,我们必须让其他进程可以使用这些函数.由于进程隔离的机制,其他进程不能直接调用文件系统进程中的函数,因此我们将通过一个远程调用(RPC)接口来封装对文件系统进程的访问,这个抽象是建立在JOS的IPC机制之上的.下图展示了对文件系统进程的访问过程(比如说,read):
+```
+      Regular env           FS env
+   +---------------+   +---------------+
+   |      read     |   |   file_read   |
+   |   (lib/fd.c)  |   |   (fs/fs.c)   |
+...|.......|.......|...|.......^.......|...............
+   |       v       |   |       |       | RPC mechanism
+   |  devfile_read |   |  serve_read   |
+   |  (lib/file.c) |   |  (fs/serv.c)  |
+   |       |       |   |       ^       |
+   |       v       |   |       |       |
+   |     fsipc     |   |     serve     |
+   |  (lib/file.c) |   |  (fs/serv.c)  |
+   |       |       |   |       ^       |
+   |       v       |   |       |       |
+   |   ipc_send    |   |   ipc_recv    |
+   |       |       |   |       ^       |
+   +-------|-------+   +-------|-------+
+           |                   |
+           +-------------------+
+```
+
+虚线以下都是从普通进程向文件系统进程执行读取请求的机制.开始,`read`(JOS提供的)可以在任何文件描述符上工作,并简单地分派到适当的设备读取功能,通常是`devfile_read`(当然可以有更多的设备类型,比如pipe).`devfile_read`实现专门针对磁盘上文件的读取.`lib/file.c`中的`devfile_*`函数实现了文件系统操作的客户端,并且都以大致相同的方式工作,将参数捆绑在请求结构中,调用`fsipc()`发送进程间通信请求,并解包和返回结果.`fsipc()`函数只处理向服务端发送请求和接收回复的常见细节.
+
+文件系统服务端代码在`fs/serv.c`中.它在`serve()`函数中循环,通过IPC不断接收请求,将该请求发送到适当的处理函数,并通过IPC发回结果.在`read`示例中,`serve`将分派给`serve_read`,它将处理特定于读取请求的IPC细节,例如解开请求结构,最后调用`file_read`来实际执行文件读取.
+
+回想一下,JOS的IPC机制允许一个进程发送一个32位数,并且可以选择共享一个内存页面.为了从客户端向服务器发送请求,我们使用32位数来表示请求类型(文件系统服务端提供的RPC均被编号,就像syscalls被编号一样),并将请求的参数存储在通过ipc共享的页面上的`union Fsipc`中.在客户端,我们总是共享`fsipcbuf`所在页面;在服务器端,我们将传入的请求页面映射到`fsreq(0x0ffff000)`.
+
+服务器也会通过IPC发回响应.我们使用32位数作为函数的返回代码.对大多数RPCs来说,通常只需要返回32位数即可.`FSREQ_READ`和`FSREQ_STAT`需要额外返回数据,它们只需将数据写入客户端发送请求的页面,没有必要在响应IPC中再次发送此页面,因为客户端已经与文件系统服务端共享此页面.此外在`FSREQ_OPEN`中,服务端将与客户端共享一个新的"Fd页面",从而返回文件描述符.
+
+### Excrcise5
+在`fs/serv.c`中实现`serve_read`.
+
+`serve_read`的繁重工作将由`fs/fs.c`中已经实现的`file_read`来完成(当然这也只是对`file_get_block`的一系列调用).`serve_read`只需要为文件读取提供RPC接口.查看`serve_set_size`中的注释和代码,大致了解应该如何完成服务端功能。
+
+使用`make grade`测试我们的代码.代码应该通过`serve_open/file_stat/file_close`和`file_read`,且得分为70/150.
+
+### Exercise6
+在`fs/serv.c`中实现`serve_write`,在`lib/file.c`中实现`devfile_write`.
+
+使用`make grade`测试我们的代码.代码应该通过`file_write`,`file_read after file_write`,`open`和`large file`,且得分为90/150.
+
 ---
 # Spawning Processes
 ## Sharing library state across fork and spawn
