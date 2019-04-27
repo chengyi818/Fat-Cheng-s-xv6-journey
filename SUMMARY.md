@@ -98,3 +98,4 @@
   * [PartB](Lab4/part-b.md)
   * [PartC](Lab4/part-c.md)
 * [Lab5](Lab5/lab5.md)
+* [Lab6](Lab6/lab6.md)

@@ -1,6 +1,6 @@
 # 参考资料
 
-1. [MIT 6.828课程地址](https://pdos.csail.mit.edu/6.828/2017/schedule.html)
+1. [MIT 2017 6.828课程地址](https://pdos.csail.mit.edu/6.828/2017/schedule.html)
 
 2. [cnblogs上关于xv6学习的笔记](http://www.cnblogs.com/fatsheep9146/category/769143.html)
 
@@ -12,8 +12,6 @@
 
 # github参考repo
 1. [shishujuan/mit6.828-2017](https://github.com/shishujuan/mit6.828-2017/)
-2. [william-cheung 2014](https://github.com/william-cheung/mit-6.828-2014)
-j
 
 # 前置知识
 1. C语言基础
@@ -21,7 +19,8 @@ j
 3. Os基础概念
 
 ---
-Tips:
+
+# Tips:
 
 1. 16进制 1000 = 10进制 1kB
 2. 16进制 10000 = 10进制 64kB

@@ -197,12 +197,74 @@ JOS已经提供了许多函数来实现文件系统所需的基本功能,这些�
 使用`make grade`测试我们的代码.代码应该通过`file_write`,`file_read after file_write`,`open`和`large file`,且得分为90/150.
 
 ---
-# Spawning Processes
-## Sharing library state across fork and spawn
+# Spawning Processes 创建子进程
+JOS已经为我们提供了用于`spawn()`函数(参见`lib/spawn.c`),它创建一个子进程,将代码镜像从文件系统加载到子进程中,然后启动运行该程序的子进程.父进程然后独立于子进程继续运行.`spawn()`函数实际上类似于UNIX中`fork()`,然后在子进程中立即执行`exec()`.
+
+我们实现了`spawn()`而不是UNIX风格的`exec()`,因为`spawn()`更容易从用户空间以"微内核"的方式实现,而无需内核的特殊帮助.想想看为了在用户空间实现`exec()`,你必须做些什么,并确保你理解为什么会更难.
+
+### Exercise7
+`spawn()`依赖于新的系统调用`sys_env_set_trapframe()`来初始化新创建进程的状态.在`kern/syscall.c`中实现`sys_env_set_trapframe`.(不要忘记在syscall()中调度新添加的系统调用).
+
+通过从`kern/init.c`运行`user/spawnhello`程序来测试我们的代码,该程序将尝试创建子进程,并运行文件系统中的`/hello`.
+
+使用`make grade`测试您的代码.
+
+## Sharing library state across fork and spawn 通过fork和spawn共享函数库
+UNIX文件描述符是一个通用概念,不仅包括普通文件,目录文件,也包括管道,console I/O等.在JOS中,这些设备类型都有一个对应的`struct Dev`,带有针对该类型实现`read/wite`等函数的指针.`lib/fd.c`在此基础上实现了通用的UNIX-like文件描述符接口.每个`struct Fd`指示其设备类型,`lib/fd.c`中的大多数函数只是将操作分派给对应的`struct Dev`中的函数.
+
+`lib/fd.c`还在每个用户进程的地址空间中维护了一个文件描述符表,起始地址为`FDTABLE`.应用程序当前最多可以打开32个文件描述符,文件描述符表为此保留了一页的内存地址空间(4KB).当且仅当相应的文件描述符正在使用时,特定的文件描述符表页才会被映射.每个文件描述符从`FILEDATA`开始也有一个可选的"data page",如果需要,可以使用这个数据页.
+
+我们希望通过`fork`和`spawn`可以共享文件描述符,但是文件描述符是保存在用户空间的.现在`fork`时,内存将被标记为`copy-on-write`,因此文件描述符将被复制而不是共享.(这意味着进程将无法在自己没有打开的文件中查找,pipe也无法在fork中使用.)而`spawn`时,内存根本不会被复制.(实际上,子进程根本就没有打开的文件描述符.)
+
+我们将修改`fork`,因为某些内存区域保存着"系统库",并且应该在所有进程间共享.我们将在`page table entry`中使用一个未使用的位,而不是在某些内存区域硬编码(就像我们在fork中使用PTE_COW).
+
+我们在`inc/lib.h`中定义了一个新的`PTE_SHARE`位.该位是英特尔和AMD手册中标记为"保留给软件使用"的三个PTE位之一.我们将设置一个规定,如果一个`page table entry`设置了这个位,那么PTE应该在`fork`和`spawn`中从父进程直接复制到子进程.请注意,这不同于将其标记为`copy-on-write`:如前所述,我们希望确保所有进程始终共享同一页面.
+
+### Exercise8
+在`lib/fork.c`中修改`duppage`以符合新的规定.如果`page table entry`设置了PTE_SHARE位,直接将其复制到子进程中.(我们应该使用`PTE_SYSCALL`而不是`0xfff`来屏蔽`page table entry`中的相关位.因为`0xfff`也会获取`accessed`和`ditry`位.)
+
+同样,在`lib/spawn.c`中实现`copy_shared_pages`.它应该遍历当前进程中的所有`page table entry`(就像fork一样),并将所有设置了`PTE_SHARE`位的`pte`复制到子进程中.
+
+使用`make run-testpteshare`测试我们的代码是否运行正常.应该会看到"fork handles PTE_SHARE right"和"spawn handles PTE_SHARE right".
+
+使用`make run-testfdsharing`检查文件描述符是否正确共享.应该会看到"read in child succeeded"和"read in parent succeeded".
+
 ---
 # The keyboard interface
+为了让shell正常工作，我们需要一种方式来向它输入信息.QEMU一直在显示CGA显示器和串行端口的输出,但是到目前为止,我们只在`kernel monitor`中进行输入.在QEMU中,图形窗口中键入的输入作为从键盘到JOS的输入,而console中键入的输入将作为串行端口上的字符.`kern/console.c`已经包含了自lab1以来`kernel monitor`一直使用的键盘和串行驱动程序,但是现在我们需要将它们应用到系统的其余部分.
+
+### Exercise9
+在`kern/trap.c`中,调用`kbd_intr`处理中断`IRQ_OFFSET+IRQ_KBD`,调用`serial_intr`处理中断`IRQ_OFFSET+IRQ_SERIAL`.
+
+JOS在`lib/console.c`中已经实现了console设备的读写函数.`kbd_intr`和`serial_intr`用最近读取的输入填充缓冲区,而控制台文件类型将读取缓冲区(默认情况下,控制台文件类型用于stdin/stdout,除非用户重定向它们).
+
+通过运行`make run-testkbd`并键入几行来测试我们的代码.当我们完成时,系统应该把我们的输入打印出来.请尝试同时在控制台和图形窗口输入一些信息.
+
 ---
+
 # The Shell
+运行`make run-icode`或`make run-inode-nox`.这将启动JOS内核并运行`user-icode`.`icode`执行`init`,它将console设置为文件描述符0和1(标准输入和标准输出).`init`将会创建子进程`sh`,即shell.我们应该能够运行以下命令:
+```
+	echo hello world | cat
+	cat lorem |cat
+	cat lorem |num
+	cat lorem |num |num |num |num |num
+	lsfd
+```
+
+请注意,用户库函数`cprintf`将直接打印到console,而不使用文件描述符.这对于调试来说很好,但是对于pipe连接到其他程序来说就不太好了.要将输出打印到特定的文件描述符(例如,标准输出1),请使用`fprintf(1,"...",...)`.`printf("...",...)`是打印到`FD 1`的缩写.有关示例,请参见`user/lsfd.c`.
+
+### Exercise10
+当前shell不支持IO重定向.最好可以运行`sh < script`,而不是像上面那样手工输入脚本中的所有命令.在`user/sh.c`添加重定向命令`<`.
+
+通过输入`sh <script`来测试我们的代码.
+
+运行`make run-testshell`来测试shell.`testshell`只是将上述命令(也可以在`fs/testshell.sh`中找到)输入到shell中,然后检查输出是否与`fs/testshell.key`相匹配.
+
+---
+
+# End
+lab5到这里全部结束,可以通过`make grade`命令来测试代码.如果没有错误的话,应该可以全部通过.
 
 
 
