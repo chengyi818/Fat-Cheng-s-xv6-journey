@@ -44,9 +44,10 @@ athena%
 
 虽然QEMU虚拟网络允许JOS任意连接到互联网,但是JOS的IP地址`10.0.2.15`在QEMU虚拟网络之外没有任何意义(也就是说,QEMU充当了一个NAT),所以我们从外部不能直接连接到JOS内部运行的进程,即使是运行QEMU的主机.为了解决这个问题,我们将QEMU配置为在主机上的某个端口上运行一个服务进程,该服务进程负责连接到JOS中的某个端口,并在真实主机和虚拟网络之间传输数据,即开启端口转发功能.
 
-### Packet Inspection
+### Packet Inspection 查看通信报文
 
 ### Debugging the E1000
+
 ---
 ## The Network Server
 ### The Core Network Server Environment
