@@ -45,8 +45,39 @@ athena%
 虽然QEMU虚拟网络允许JOS任意连接到互联网,但是JOS的IP地址`10.0.2.15`在QEMU虚拟网络之外没有任何意义(也就是说,QEMU充当了一个NAT),所以我们从外部不能直接连接到JOS内部运行的进程,即使是运行QEMU的主机.为了解决这个问题,我们将QEMU配置为在主机上的某个端口上运行一个服务进程,该服务进程负责连接到JOS中的某个端口,并在真实主机和虚拟网络之间传输数据,即开启端口转发功能.
 
 ### Packet Inspection 查看通信报文
+makefile还配置了QEMU的网络协议栈,将所有通信数据包记录到lab目录中的qemu.pcap.
+
+要获取捕获数据包的十六进制/ASCII转储,请使用如下tcpdump:
+```
+tcpdump -XXnr qemu.pcap
+```
+
+另外,我们也可以使用[Wireshark](http://www.wireshark.org/)图形界面来查看pcap文件.wireshark支持数百种网络协议,我个人非常喜欢使用.
 
 ### Debugging the E1000
+我们很幸运能够使用仿真硬件.由于E1000运行在软件中,模拟E1000可以以用户可读的格式向我们报告其内部状态和遇到的任何问题.通常,对于用裸机编写的驱动程序开发人员来说是不可能获取这些信息的.
+
+E1000可以产生很多调试输出,所以我们必须启用特定的日志channel.一些有用的channel如下:
+```
+
+| Flag      | Meaning                                            |
+|-----------|----------------------------------------------------|
+| tx        | Log packet transmit operations                     |
+| txerr     | Log transmit ring errors                           |
+| rx        | Log changes to RCTL                                |
+| rxfilter  | Log filtering of incoming packets                  |
+| rxerr     | Log receive ring errors                            |
+| unknown   | Log reads and writes of unknown registers          |
+| eeprom    | Log reads from the EEPROM                          |
+| interrupt | Log interrupts and changes to interrupt registers. |
+
+```
+
+例如,要启用"tx"和"txerr"日志记录,请使用`make E1000_DEBUG=tx,txerr ...`
+
+注意,`E1000_DEBUG`仅针对6.828版本的QEMU有效.
+
+我们可以进一步使用软件模拟硬件进行调试.如果开发过程中陷入困境,不明白E1000为什么没有按照预期的方式响应,可以看看QEMU在`hw/e1000.c`中的E1000实现.
 
 ---
 ## The Network Server
