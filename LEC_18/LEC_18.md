@@ -198,7 +198,16 @@ A: cache一致性保证了CPU可以读取到最新的数据,而锁避免了在�
 3. 释放消耗为: `invalidate`下一个占有锁的slot,只有它需要重新load,不涉及其他core.
 4. 所以每次释放的时间复杂度为O(1).
 5. 缺点在于: 比较大的内存消耗.每个锁都需要N个slot.通常比受保护对象的还要大得多.
+6. 本思想由Anderson提出
 
+## MCS
+1. [code](https://pdos.csail.mit.edu/6.828/2017/lec/scalable-lock-code.c)
+2. 目标: 效果类似Anderson,但是减少内存使用.
+3. 思路: 为每个lock创建一个等待链表.
+4. 思路: 每个线程都是链表中的一个节点,因为每个线程只能等待一个lock,所以总的内存消耗为O(locks+threads),而不是O(locks*threads).
+5. `acquire()`将调用者插入等待链表尾部,然后调用者在自己的节点上自旋.
+6. `release()`唤醒下一个节点,同时删除本节点.
+7. API需要稍微修改下(需要传入qnode来获取和释放锁)
 
 
 
