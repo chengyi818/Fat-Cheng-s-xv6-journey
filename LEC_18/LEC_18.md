@@ -210,9 +210,53 @@ A: cache一致性保证了CPU可以读取到最新的数据,而锁避免了在�
 7. API需要稍微修改下(需要传入qnode来获取和释放锁)
 
 
+## scalable lock的性能
+1. Paper中的Figure10展示了ticket lock,MCS lock及优化后的对比结果.
+2. 其中,x轴表示核数,y轴表示总吞吐量.
 
+Q: 为什么总吞吐量没有随着核数的增加而增长?
+1. ticket lock在两个核时性能最佳,只有一个原子指令.
+2. ticket lock伸缩性不佳,消耗随着核数增加而增加.
+3. MCS伸缩性很好,消耗随着核数增加而保持不变.
 
+## Figure 11
+1. 展示了没有竞争时的耗时.在没有竞争时,非常快速.
+2. ticket lock在获取锁时,使用了一个原子指令,所以耗时是释放的10倍.
+3. 如果另外一个core之前占有锁,则耗时会进一步上升.
 
+## scalable lock使内核伸缩性变好了?
+1. 没有,伸缩性受限于临界区的大小,scalable lock避免了性能大幅下降.
+2. 为了解决伸缩性的问题,需要重新设计内核子系统.
+
+---
+
+## Linux内核和MCS locks
+Linux内核有可伸缩(或不会性能急剧下降)的锁,并且正在使用它.修复基于ticket的自旋锁的性能的最早努力可以追溯到2013年的[1],似乎使用了我们今天读到的这篇论文.(但是那个特别的补丁实际上并没有合入内核主线).大约在同一时间,用MCS锁实现了互斥锁[2].
+
+然而,用可伸缩的锁替换ticket自旋锁却是一个很大的挑战.更难的问题在于,像MCS这样的锁定方案会使每个自旋锁的大小膨胀,这是不希望的,因为自旋锁在Linux内核中有额外的大小限制.
+
+几年后,Linux开发人员想出了`qspinlocks`(使用MCS机制,用巧妙的技巧来避免自旋锁的大小膨胀)替换ticket自旋锁,它现在是自2015年以来Linux内核[3][4]中默认的自旋锁实现.你也可以找到这篇[5]文章(Linux锁子系统的贡献者之一写的),非常有趣.
+
+旧的不再使用的的ticket自旋锁实现已在2016年[6]从代码库中删除.
+
+[1]. Fixing ticket-spinlocks:
+https://lwn.net/Articles/531254/
+https://lwn.net/Articles/530458/
+
+[2]. MCS locks used in the mutex-lock implementation:
+http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=2bd2c92cf07cc4a
+
+[3]. MCS locks and qspinlocks:
+https://lwn.net/Articles/590243/
+
+[4]. qspinlock (using MCS underneath) as the default spin-lock implementation:
+http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=a33fda35e3a765
+
+[5]. Article providing context and motivation for various locking schemes:
+http://queue.acm.org/detail.cfm?id=2698990
+
+[6]. Removal of unused ticket-spinlock code from the Linux kernel:
+http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=cfd8983f03c7b2
 
 
 
