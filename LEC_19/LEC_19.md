@@ -1,0 +1,95 @@
+# 内核伸缩性
+
+# 动机
+1. 现代CPU大多数都是多核的.
+2. 应用程序严重依赖内核的网络,文件系统.
+3. 如果内核在多核场景性能不佳,那么应用程序的性能同样受到限制.
+4. 因此,内核必须支持并发执行系统调用.
+
+# 数据共享
+1. 内核本身会创建很多公共的数据结构.比如进程表,文件描述符表,buffer缓存,调度列表等.
+2. 依赖锁保证其一致性.
+3. 应用程序可能会抢锁导致竞争,从而降低性能.
+
+# OS的演进
+1. 早期内核使用**大内核锁**来保护内核数据.
+2. 不久,内核就推出了更细粒度的锁
+3. 现在,许多`lock-free`的方法也在大量使用.
+4. 极端情况下,一些实验性质的内核正在尝试不共享任何数据.比如FOS和Barrelfish.
+5. 优点在于,不存在缓存一致性问题.
+6. 缺点在于,负载均衡的性能很差.
+
+# 大纲
+1. Read-copy-update
+2. 每个CPU 引用计数
+3. 核间通信规则
+
+---
+
+# 大量读操作的数据结构
+内核经常面临这样的情况,读的操作远远多于写.比如网络相关的路由表,ARP.比如文件描述符数组,大多数的系统调用状态.RCU(Read-copy-update)有助于提升这些场景的性能.目前内核中大约有10,000处使用了RCU的API.
+
+目标:
+1. 在写的同时,支持并发读取.
+2. 较小的空间消耗
+3. 较小的执行时长
+
+---
+
+## 方案一: 自旋锁
+这种方案的主要问题在于,所有临界区中的执行都必须按顺序.这样会导致读进程必须等待其他读进程完成.
+
+改进的方案在于,是否可以允许多个进程同时读取.当写入时,再抢锁写入.因此引入了第二种方案.
+
+---
+
+## 方案二: 读写锁
+读写锁允许并发读取,能够提升性能.
+
+### 读写锁实现
+
+```
+typedef struct { volatile int cnt; } rwlock_t;
+
+void read_lock(rwlock_t *l) {
+  int x;
+  while (true) {
+    x = l->cnt;
+    if (x < 0) // is write lock held?
+      continue;
+
+    if (CMPXCHG(&l->cnt, x, x + 1))
+      break;
+  }
+}
+
+void read_unlock(rwlock_t *l) {
+  ATOMIC_DEC(&l->cnt);
+}
+
+typedef struct { volatile int cnt; } rwlock_t;
+
+void write_lock(rwlock_t *l) {
+  int x;
+  while (true) {
+    x = l->cnt;
+    if (x != 0) // is the lock held?
+      continue;
+    if (CMPXCHG(&l->cnt, 0, -1))
+      break;
+  }
+}
+
+void write_unlock(rwlock_t *l) {
+  ATOMIC_INC(&l->cnt);
+}
+```
+
+### 读写锁性能分析
+每个读进程都会调用`CMPXCHG`指令.该指令会将`Shared`状态的缓存改为`Modified`.因此`read_lock()`将会查找并使得`l->cnt`变量失效.`read_unlock()`同样如此.另外,如果写进程占有锁,那么所有读进程序必须自旋等待.
+
+进一步的优化目标在于,在写数据的同时,支持并发读取.
+
+---
+
+## 方案三: Read-copy-update(RCU)
