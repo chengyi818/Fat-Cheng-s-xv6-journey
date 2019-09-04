@@ -53,6 +53,33 @@
   5.2 配置信息,比如是否需要在缺页异常时陷入root模式.
 
 ## pushf/popf 示例
+1. guest使用硬件标志位
+  1.1 当CPL=0时,pushf/popf等指令会读写该标志位
+  1.2 从guest的角度,硬件运行正常
+2. 当发生硬件设备中断
+  2.1 通过VMM配置VMCS(virtual machine control structure),来控制每个中断是由guest还是由host响应.
+  2.2 如果由guest响应:
+    2.2.1 硬件首先检查guest的可中断标志位
+    2.2.2 通过guest的IDT获取硬件中断向量
+    2.2.3 不需要退出guest状态
+  2.3 如果由host响应
+    2.3.1 VT-x退出guest状态,返回VMM.VMM处理中断.
+
+## VT-x: 页表
+1. EPT: 第二层地址转换
+2. EPT由VMM控制
+3. %cr3寄存器由guest控制
+4. guest虚拟地址通过cr3转换为guest物理地址,guest物理地址通过EPT转换为host物理地址.
+  4.1 cr3寄存器保存的是guest物理地址
+  4.2 EPT保存的是host物理地址.
+5. EPT对于guest而言,是不可见的.
+6. 所以:
+  6.1 guest可以自由读写cr3寄存器,修改PTE.
+  6.2 VMM通过EPT提供隔离
+7. 典型设置:
+  7.1 VMM分配size大小的物理内存供guest使用
+  7.2 VMM将guest物理内存地址,从0到size映射到EPT中.
+  7.3 guest使用cr3来配置guest的进程地址空间.
 
 
 
